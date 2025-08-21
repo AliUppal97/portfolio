@@ -1,0 +1,321 @@
+/// components/custom-cursor.tsx
+import React from "react";
+
+interface CustomCursorProps {
+  isInteractive: boolean;
+}
+
+const CustomCursor: React.FC<CustomCursorProps> = ({ isInteractive }) => {
+  const color = getContrastColor(isInteractive);
+  const scale = isInteractive ? 1.35 : 1;
+
+  return (
+    <div
+      style={{
+        width: 18,
+        height: 18,
+        backgroundColor: color,
+        opacity: 0.6,
+        transform: `scale(${scale})`,
+        boxShadow: "0 0 16px color-mix(in oklab, var(--primary), transparent 70%)",
+        border: "1px solid rgba(255,255,255,0.35)",
+        borderRadius: 9999,
+      }}
+      className="mix-blend-difference transition-[transform,background-color,opacity] duration-150 ease-out"
+    />
+  );
+};
+
+function getContrastColor(isInteractive: boolean) {
+  return isInteractive
+    ? "color-mix(in oklab, var(--fg), white 25%)"
+    : "color-mix(in oklab, var(--primary), white 35%)";
+}
+
+export default CustomCursor;
+
+// components/customizer-panel.tsx
+import React from "react";
+import { SheetContent } from "@/components/ui/sheet";
+
+const CustomizerPanel: React.FC = () => {
+  return (
+    <div>
+      <SheetContent className="sm:max-w-md overflow-y-auto bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 border-l">
+        {/* Content for the sheet */}
+      </SheetContent>
+      {/* Invisible host sheet content */}
+      <SheetContent className="sm:max-w-md overflow-y-auto bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 border-l">
+        {/* Content for the invisible host sheet */}
+      </SheetContent>
+    </div>
+  );
+};
+
+export default CustomizerPanel;
+
+// components/ui/sheet.tsx
+import React from "react";
+import * as SheetPrimitive from "@radix-ui/react-dialog";
+import { cn } from "@/lib/utils";
+import { SheetPortal } from "./sheet-portal";
+
+const SheetOverlay = React.forwardRef<
+  React.ElementRef<typeof SheetPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
+>(({ className, style, ...props }, ref) => (
+  <SheetPrimitive.Overlay
+    ref={ref}
+    className={cn(
+      "fixed inset-0 z-50",
+      "data-[state=open]:animate-in data-[state=closed]:animate-out",
+      "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      // keep class bg transparent; we set visual via inline style to avoid black overlay and missing CSS vars
+      "bg-transparent backdrop-blur-md",
+      className
+    )}
+    style={{
+      // neutral translucent backdrop; avoids black screen and works outside your CustomizationProvider
+      background: "rgba(127,127,127,0.12)",
+      backdropFilter: "blur(10px)",
+      WebkitBackdropFilter: "blur(10px)",
+      ...style,
+    }}
+    {...props}
+  />
+));
+SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
+
+const SheetContent = React.forwardRef<
+  React.ElementRef<typeof SheetPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <SheetPortal>
+    <SheetOverlay />
+    <SheetPrimitive.Content
+      ref={ref}
+      className={cn(
+        "fixed inset-0 z-50 flex h-full w-full items-center justify-center",
+        "sm:items-start sm:justify-start sm:max-w-md",
+        "bg-background text-foreground",
+        "focus:outline-none",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </SheetPrimitive.Content>
+  </SheetPortal>
+));
+SheetContent.displayName = SheetPrimitive.Content.displayName;
+
+export { SheetOverlay, SheetContent };
+
+// components/sections/experience.tsx
+import React from "react";
+import Image from "next/image";
+
+const ExperienceSection: React.FC = () => {
+  const items = [
+    { company: "Company A", logoSrc: "/logo-a.png", logoAlt: "Company A Logo" },
+    { company: "Company B", logoSrc: "", logoAlt: "Company B Logo" },
+  ];
+
+  return (
+    <div>
+      {items.map((item) => (
+        <div key={item.company} className="relative h-14 w-14">
+          {item.logoSrc ? (
+            <Image
+              src={item.logoSrc || "/placeholder.svg?height=56&width=56&query=company%20logo"}
+              alt={item.logoAlt ?? `${item.company} logo`}
+              fill
+              sizes="56px"
+              className="object-cover"
+            />
+          ) : (
+            <Image
+              src={`/placeholder.svg?height=56&width=56&query=${encodeURIComponent(item.company)}%20logo`}
+              alt={`${item.company} logo placeholder`}
+              fill
+              sizes="56px"
+              className="object-cover"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default ExperienceSection;
+
+// components/sections/projects.tsx
+import React from "react";
+import Image from "next/image";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+  DialogOverlay,
+  DialogPortal
+} from "@/components/ui/dialog";
+
+const projectImageMap: Record<string, string> = {
+  "Payments Platform": "/images/projects/payments-platform.png",
+  "Care Portal": "/images/projects/care-portal.png",
+  "Analytics SaaS": "/images/projects/analytics-saas.png",
+};
+
+function getProjectImg(title: string) {
+  return projectImageMap[title] || "/images/projects/analytics-saas.png";
+}
+
+const ProjectsSection: React.FC = () => {
+  const projects = [
+    { title: "Payments Platform", imageAlt: "Payments Platform Image" },
+    { title: "Care Portal", imageAlt: "Care Portal Image" },
+    { title: "Analytics SaaS", imageAlt: "Analytics SaaS Image" },
+  ];
+
+  const [active, setActive] = React.useState(null);
+
+  return (
+    <div>
+      {projects.map((p) => (
+        <div key={p.title} className="group">
+          <Image
+            src={getProjectImg(p.title) || "/placeholder.svg"}
+            alt={p.imageAlt}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
+          <Dialog open={active === p} onOpenChange={(open) => (open ? setActive(p) : setActive(null))}>
+            <DialogContent>
+              <Image
+                src={getProjectImg(active.title) || "/placeholder.svg"}
+                alt={active.imageAlt}
+                fill
+                className="object-cover"
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default ProjectsSection;
+
+// components/sections/skills.tsx
+import React from "react";
+import Image from "next/image";
+import { LOGOS } from "@/constants/logos";
+
+const SkillsSection: React.FC = () => {
+  const skills = [
+    { name: "Skill A" },
+    { name: "Skill B" },
+    { name: "Skill C" },
+  ];
+
+  return (
+    <div>
+      {skills.map((skill) => (
+        <div key={skill.name} className="flex items-center">
+          <SkillLogo name={skill.name} />
+          <span>{skill.name}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+function SkillLogo({ name }: { name: string }) {
+  const src = LOGOS[name];
+  return (
+    <div className="relative h-5 w-5 shrink-0 overflow-hidden rounded-sm">
+      <Image
+        src={src || `/placeholder.svg?height=20&width=20&query=${encodeURIComponent(name)}%20logo`}
+        alt={`${name} logo`}
+        fill
+        sizes="20px"
+        className="object-contain"
+      />
+    </div>
+  );
+}
+
+export default SkillsSection;
+
+// components/sections/skills-icon-cards.tsx
+import React from "react";
+import Image from "next/image";
+
+const SkillsIconCardsSection: React.FC = () => {
+  const technologies = [
+    { src: "/icon-a.png", alt: "Icon A" },
+    { src: "", alt: "Icon B" },
+  ];
+
+  return (
+    <div>
+      {technologies.map((t) => (
+        <div key={t.alt} className="relative h-14 w-14">
+          <Image
+            src={t.src || `/placeholder.svg?height=56&width=56&query=${encodeURIComponent(t.alt)}%20logo`}
+            alt={t.alt}
+            fill
+            className="object-contain"
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default SkillsIconCardsSection;
+
+// components/sections/technologies.tsx
+import React from "react";
+import Image from "next/image";
+
+const TechnologiesSection: React.FC = () => {
+  const technologies = [
+    { name: "Tech A" },
+    { name: "Tech B" },
+  ];
+
+  const size = 56;
+
+  return (
+    <div>
+      {technologies.map((tech) => (
+        <div key={tech.name} className="relative h-14 w-14">
+          <TechIcon name={tech.name} size={size} />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+function TechIcon({ name, size }: { name: string; size: number }) {
+  return (
+    <Image
+      src={`/placeholder.svg?height=56&width=56&query=${encodeURIComponent(name)}%20logo`}
+      alt={`${name} logo`}
+      width={size}
+      height={size}
+      className="h-14 w-14 object-contain"
+      draggable={false}
+    />
+  );
+}
+
+export default TechnologiesSection;
