@@ -480,10 +480,7 @@ export function TechnologiesSection() {
         <header className="text-center mb-16 max-w-5xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-6">
             <Zap className="w-8 h-8 text-purple-500 animate-pulse" />
-            <h2
-              id="technologies-title"
-              className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-slate-900 via-purple-600 to-slate-900 dark:from-white dark:via-purple-400 dark:to-white bg-clip-text text-transparent"
-            >
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
               Technical Expertise
             </h2>
             <Shield className="w-8 h-8 text-blue-500" />

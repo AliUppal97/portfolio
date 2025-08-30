@@ -151,6 +151,10 @@ const config: Config = {
   			'spin-reverse': {
   				from: { transform: 'rotate(360deg)' },
   				to: { transform: 'rotate(0deg)' }
+  			},
+  			'float': {
+  				'0%, 100%': { transform: 'translateY(0px)' },
+  				'50%': { transform: 'translateY(-10px)' }
   			}
   		},
   		animation: {
@@ -162,7 +166,8 @@ const config: Config = {
   			'scale-in': 'scale-in 0.3s ease-out',
   			'gradient': 'gradient 3s ease infinite',
   			'spin-slow': 'spin-slow 20s linear infinite',
-  			'spin-reverse': 'spin-reverse 15s linear infinite'
+  			'spin-reverse': 'spin-reverse 15s linear infinite',
+  			'float': 'float 6s ease-in-out infinite'
   		},
   		// Premium Spacing and Layout
   		spacing: {

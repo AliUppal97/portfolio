@@ -259,7 +259,7 @@ export function SkillsSection() {
               measurable proficiency levels
             </span>{" "}
             and years of hands-on experience.
-            <span className="block mt-2 text-base">
+            <span className="block mt-2 text-base" style={{ color: "var(--fg-muted)" }}>
               Each skill represents real-world project delivery and continuous learning.
             </span>
           </p>
@@ -295,7 +295,7 @@ export function SkillsSection() {
                 <div className="text-sm font-semibold mb-1" style={{ color: "var(--fg)" }}>
                   {stat.label}
                 </div>
-                <div className="text-xs text-slate-600 dark:text-slate-400">
+                <div className="text-xs" style={{ color: "var(--fg-muted)" }}>
                   {stat.description}
                 </div>
               </div>
