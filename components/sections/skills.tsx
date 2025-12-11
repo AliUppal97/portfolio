@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { Button } from "@/components/ui/button"
-import Image from "next/image"
 import { useMemo, useState, useCallback, useRef, useEffect } from "react"
 import { skills } from "@/lib/data"
 import { useCustomization } from "@/components/providers/customization-provider"
@@ -21,38 +20,86 @@ import {
   BarChart3,
   Layers,
   Shield,
+  Layout,
+  FileCode,
+  Palette,
+  Terminal,
+  Database,
+  GitBranch,
+  Cloud,
+  Container,
+  Settings,
+  Activity,
+  HardDrive,
+  TestTube,
+  Smartphone,
+  Monitor,
+  Eye,
+  UserCheck,
+  Network,
+  MessageSquare,
+  type LucideIcon,
 } from "lucide-react"
 
-// Map known skills to logo images in /public/logos
-const LOGOS: Record<string, string> = {
-  "React / Next.js": "/logos/nextjs.png",
-  React: "/logos/react.png",
-  TypeScript: "/logos/typescript.png",
-  "Tailwind CSS": "/logos/tailwind.png",
-  "Node.js": "/logos/node.png",
-  PostgreSQL: "/logos/postgres.png",
-  "REST / GraphQL": "/logos/graphql.png",
-  GraphQL: "/logos/graphql.png",
-  Kafka: "/logos/kafka.png",
-  AWS: "/logos/aws.png",
-  "CI/CD": "/logos/ci-cd.png",
-  "Docker / Kubernetes": "/logos/docker.png",
-  Docker: "/logos/docker.png",
-  Kubernetes: "/logos/kubernetes.png",
-  Observability: "/logos/observability.png",
-  Redis: "/logos/redis.png",
-  Jest: "/logos/jest.png",
-  Playwright: "/logos/playwright.png",
-  "React Native": "/logos/react-native.png",
-  Electron: "/logos/electron.png",
-  "Vue.js": "/logos/react.png", // fallback
-  Python: "/logos/python.png",
-  "Team Leadership": "/logos/ci-cd.png", // fallback
-  "System Architecture": "/logos/kubernetes.png", // fallback
-  "Code Review": "/logos/github.png",
-  Mentoring: "/logos/ci-cd.png", // fallback
+// Clean Lucide icons for all skills - no backgrounds, crisp SVG
+const skillIcons: Record<string, LucideIcon> = {
+  "React / Next.js": Layout,
+  React: Layers,
+  TypeScript: FileCode,
+  "Tailwind CSS": Palette,
+  "Node.js": Terminal,
+  PostgreSQL: Database,
+  "REST / GraphQL": GitBranch,
+  GraphQL: GitBranch,
+  Kafka: Activity,
+  AWS: Cloud,
+  "CI/CD": Settings,
+  "Docker / Kubernetes": Container,
+  Docker: Container,
+  Kubernetes: Container,
+  Observability: Eye,
+  Redis: HardDrive,
+  Jest: TestTube,
+  Playwright: TestTube,
+  "React Native": Smartphone,
+  Electron: Monitor,
+  "Vue.js": Layers,
+  Python: Code2,
+  "Team Leadership": UserCheck,
+  "System Architecture": Network,
+  "Code Review": GitBranch,
+  Mentoring: MessageSquare,
 }
-const logoFallback = "/images/fallbacks/logo-fallback.png"
+
+// Premium brand colors for each skill
+const skillBrandColors: Record<string, { primary: string; secondary: string }> = {
+  "React / Next.js": { primary: "#000000", secondary: "#333333" },
+  React: { primary: "#61DAFB", secondary: "#087EA4" },
+  TypeScript: { primary: "#3178C6", secondary: "#5B9BD5" },
+  "Tailwind CSS": { primary: "#06B6D4", secondary: "#38BDF8" },
+  "Node.js": { primary: "#339933", secondary: "#68BB59" },
+  PostgreSQL: { primary: "#336791", secondary: "#4A90A4" },
+  "REST / GraphQL": { primary: "#E10098", secondary: "#F48FB1" },
+  GraphQL: { primary: "#E10098", secondary: "#F48FB1" },
+  Kafka: { primary: "#231F20", secondary: "#555555" },
+  AWS: { primary: "#FF9900", secondary: "#232F3E" },
+  "CI/CD": { primary: "#2088FF", secondary: "#58A6FF" },
+  "Docker / Kubernetes": { primary: "#2496ED", secondary: "#326CE5" },
+  Docker: { primary: "#2496ED", secondary: "#0085D1" },
+  Kubernetes: { primary: "#326CE5", secondary: "#5B9BD5" },
+  Observability: { primary: "#FF6B6B", secondary: "#FF8E8E" },
+  Redis: { primary: "#DC382D", secondary: "#F44336" },
+  Jest: { primary: "#C21325", secondary: "#FF5555" },
+  Playwright: { primary: "#2EAD33", secondary: "#4BC54F" },
+  "React Native": { primary: "#61DAFB", secondary: "#087EA4" },
+  Electron: { primary: "#47848F", secondary: "#9FEAF9" },
+  "Vue.js": { primary: "#42B883", secondary: "#35495E" },
+  Python: { primary: "#3776AB", secondary: "#FFD43B" },
+  "Team Leadership": { primary: "#F59E0B", secondary: "#FBBF24" },
+  "System Architecture": { primary: "#8B5CF6", secondary: "#A78BFA" },
+  "Code Review": { primary: "#238636", secondary: "#2EA043" },
+  Mentoring: { primary: "#EC4899", secondary: "#F472B6" },
+}
 
 const categoryIcons = {
   "Frontend Development": Code2,
@@ -88,11 +135,18 @@ const categoryColors = {
   },
 }
 
-function SkillLogo({ name }: { name: string }) {
-  const src = LOGOS[name] || logoFallback
+function SkillLogo({ name, color }: { name: string; color?: string }) {
+  const Icon = skillIcons[name] || Code2
+  const brandColor = skillBrandColors[name]?.primary || color || "#6B7280"
   return (
-    <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded-lg">
-      <Image src={src || "/placeholder.svg"} alt={`${name} logo`} fill sizes="24px" className="object-contain" />
+    <div className="relative h-6 w-6 shrink-0 flex items-center justify-center">
+      <Icon
+        className="w-5 h-5 transition-all duration-300"
+        style={{
+          color: brandColor,
+          strokeWidth: 2,
+        }}
+      />
     </div>
   )
 }
@@ -281,13 +335,13 @@ export function SkillsSection() {
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative z-10">
                 <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"
                   style={{
                     background: `linear-gradient(135deg, ${stat.color}, ${stat.color}90)`,
-                    boxShadow: `0 8px 25px -5px ${stat.color}40`,
+                    boxShadow: `0 4px 14px -2px ${stat.color}35`,
                   }}
                 >
-                  <stat.icon className="w-6 h-6 text-white" />
+                  <stat.icon className="w-6 h-6 text-white" style={{ strokeWidth: 2.5 }} />
                 </div>
                 <div className="text-3xl font-bold mb-2" style={{ color: stat.color }}>
                   {stat.value}
@@ -468,25 +522,25 @@ function PremiumSkillCategory({ category, index }: { category: (typeof skills)[0
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        {/* Premium gradient overlay */}
+        {/* Clean gradient overlay - matching Professional Toolkit style */}
         <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
           style={{
-            background: `linear-gradient(135deg, ${colors.primary}08, ${colors.secondary}15)`,
+            background: `linear-gradient(160deg, ${colors.primary}05 0%, ${colors.secondary}08 100%)`,
           }}
         />
 
-        {/* Category header */}
+        {/* Category header - Clean icon container */}
         <div className="flex items-center justify-between mb-8 relative z-10">
           <div className="flex items-center gap-4">
             <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center"
+              className="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
               style={{
                 background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
-                boxShadow: `0 10px 25px -5px ${colors.primary}40`,
+                boxShadow: `0 4px 14px -2px ${colors.primary}35`,
               }}
             >
-              <CategoryIcon className="w-7 h-7 text-white" />
+              <CategoryIcon className="w-7 h-7 text-white" style={{ strokeWidth: 2.5 }} />
             </div>
             <div>
               <h3 className="text-xl font-bold" style={{ color: "var(--fg)" }}>
@@ -593,17 +647,17 @@ function PremiumSkillCategoryExpanded({ category, index }: { category: (typeof s
 
   return (
     <div ref={elementRef} className="space-y-8">
-      {/* Premium category header */}
+      {/* Premium category header - Clean icon container */}
       <div className="text-center">
         <div className="flex items-center justify-center gap-4 mb-4">
           <div
             className="w-16 h-16 rounded-3xl flex items-center justify-center"
             style={{
               background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
-              boxShadow: `0 15px 35px -5px ${colors.primary}40`,
+              boxShadow: `0 4px 14px -2px ${colors.primary}35`,
             }}
           >
-            <CategoryIcon className="w-8 h-8 text-white" />
+            <CategoryIcon className="w-8 h-8 text-white" style={{ strokeWidth: 2.5 }} />
           </div>
         </div>
         <h3 className="text-2xl font-bold mb-2" style={{ color: "var(--fg)" }}>
@@ -657,11 +711,11 @@ function PremiumSkillCategoryExpanded({ category, index }: { category: (typeof s
               <PremiumProgressBar value={skill.level} inView={inView} color={colors.primary} />
             </div>
 
-            {/* Hover overlay */}
+            {/* Clean hover overlay - matching Professional Toolkit style */}
             <div
               className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
               style={{
-                background: `linear-gradient(135deg, ${colors.primary}10, ${colors.secondary}20)`,
+                background: `linear-gradient(160deg, ${colors.primary}05 0%, ${colors.secondary}08 100%)`,
               }}
             />
           </div>
