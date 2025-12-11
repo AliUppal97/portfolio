@@ -100,7 +100,7 @@ function PremiumTimelineNode({ index, isActive }: { index: number; isActive: boo
         className="absolute top-8 w-0.5 h-full transition-all duration-1000"
         style={{
           background: isActive
-            ? "linear-gradient(to bottom, var(--primary), var(--primary)60, transparent)"
+            ? "linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--primary) / 0.6), transparent)"
             : "linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.1), transparent)",
         }}
       />
@@ -114,9 +114,9 @@ function PremiumTimelineNode({ index, isActive }: { index: number; isActive: boo
         )}
         style={{
           background: isActive
-            ? `linear-gradient(135deg, var(--primary), var(--primary)90)`
+            ? `linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.9))`
             : "linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6))",
-          boxShadow: isActive ? `0 0 20px var(--primary)40` : "0 4px 12px rgba(0,0,0,0.15)",
+          boxShadow: isActive ? "0 0 20px hsl(var(--primary) / 0.4)" : "0 4px 12px rgba(0,0,0,0.15)",
         }}
       >
         {/* Pulse animation for active node */}
