@@ -225,32 +225,20 @@ function MetricCard({ m, i, delay = 0 }: { m: Metric; i: number; delay?: number 
 
         <div className="p-8 flex-1 flex flex-col justify-between relative z-10">
           <div className="flex items-start gap-6">
-            {/* Premium 3D icon container with gradient */}
+            {/* Clean icon container - matching Professional Toolkit style */}
             <div
               className={cn(
-                "flex h-16 w-16 items-center justify-center rounded-2xl shrink-0 transition-all duration-300 relative",
-                isHovered ? "scale-110 rotate-3" : "scale-100 rotate-0",
+                "flex h-16 w-16 items-center justify-center rounded-2xl shrink-0 transition-all duration-300 relative overflow-hidden",
+                isHovered ? "scale-110" : "scale-100",
               )}
               style={{
                 background: categoryStyles.iconBg,
-                boxShadow: isHovered
-                  ? `0 8px 25px color-mix(in oklab, ${categoryStyles.accentColor}, transparent 60%), var(--shadow-3)`
-                  : `0 4px 15px color-mix(in oklab, ${categoryStyles.accentColor}, transparent 70%), var(--shadow-2)`,
+                boxShadow: `0 4px 14px -2px color-mix(in oklab, ${categoryStyles.accentColor}, transparent 65%)`,
               }}
             >
-              {/* Subtle shine effect */}
-              <div
-                className={cn(
-                  "absolute inset-0 rounded-2xl transition-opacity duration-300",
-                  isHovered ? "opacity-20" : "opacity-0",
-                )}
-                style={{
-                  background: "linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%)",
-                }}
-              />
               <Icon
                 className="h-8 w-8 relative z-10 transition-transform duration-300"
-                style={{ color: categoryStyles.iconColor }}
+                style={{ color: categoryStyles.iconColor, strokeWidth: 2.5 }}
                 aria-hidden="true"
               />
             </div>
