@@ -59,13 +59,10 @@ export async function POST(req: Request) {
       )
     }
 
-    const { name, email, message, company, website, honeypot } = result.data
+    const { name, email, message, company, website } = result.data
 
-    // Honeypot check - if filled, it's likely a bot
-    if (honeypot && honeypot.trim().length > 0) {
-      // Pretend success to fool bots
-      return NextResponse.json({ ok: true }, { status: 200 })
-    }
+    // Note: Honeypot validation is handled by Zod schema (max(0) rejects non-empty values)
+    // If we reach here, the honeypot check already passed during schema validation
 
     // Send email notification
     const emailResult = await sendEmailWithResend({
