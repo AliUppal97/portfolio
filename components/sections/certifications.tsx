@@ -189,13 +189,13 @@ export function CertificationsSection() {
                 <CardContent className="p-6 text-center">
                   <div className="mb-4 flex justify-center">
                     <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+                      className="p-3 rounded-2xl transition-all duration-300 group-hover:scale-110"
                       style={{
-                        background: `linear-gradient(135deg, ${stat.color}, ${stat.color}90)`,
-                        boxShadow: `0 4px 14px -2px ${stat.color}35`,
+                        backgroundColor: `${stat.color}20`,
+                        boxShadow: `0 8px 32px ${stat.color}30`,
                       }}
                     >
-                      <stat.icon className="h-6 w-6 text-white" style={{ strokeWidth: 2.5 }} />
+                      <stat.icon className="h-6 w-6" style={{ color: stat.color }} />
                     </div>
                   </div>
                   <div className="text-3xl font-bold mb-2" style={{ color: "var(--fg)" }}>
@@ -209,11 +209,11 @@ export function CertificationsSection() {
                   </div>
                 </CardContent>
 
-                {/* Clean hover effect - matching Professional Toolkit style */}
+                {/* Premium hover effect */}
                 <div
-                  className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                   style={{
-                    background: `linear-gradient(160deg, ${stat.color}05 0%, ${stat.color}08 100%)`,
+                    background: `linear-gradient(135deg, ${stat.color}10, transparent)`,
                   }}
                 />
               </Card>
@@ -297,13 +297,13 @@ export function CertificationsSection() {
               <CardContent className="p-8">
                 <div className="mb-4 flex justify-center">
                   <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center"
+                    className="p-4 rounded-2xl"
                     style={{
-                      background: "linear-gradient(135deg, var(--primary), var(--primary))",
-                      boxShadow: "0 4px 14px -2px rgba(var(--primary-rgb), 0.35)",
+                      backgroundColor: "var(--primary)",
+                      boxShadow: "0 8px 32px var(--primary)40",
                     }}
                   >
-                    <Shield className="h-8 w-8 text-white" style={{ strokeWidth: 2.5 }} />
+                    <Shield className="h-8 w-8 text-white" />
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold mb-3" style={{ color: "var(--fg)" }}>
@@ -374,11 +374,11 @@ function CertificationCard({
       onMouseLeave={() => onHover(null)}
       data-interactive="true"
     >
-      {/* Clean gradient overlay - matching Professional Toolkit style */}
+      {/* Premium gradient overlay */}
       <div
-        className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{
-          background: `linear-gradient(160deg, ${categoryConfig?.color}05 0%, ${categoryConfig?.color}08 100%)`,
+          background: `linear-gradient(135deg, ${categoryConfig?.color}10, transparent)`,
         }}
       />
 
@@ -413,12 +413,11 @@ function CertificationCard({
                 <div
                   className="flex h-16 w-16 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110"
                   style={{
-                    background: `linear-gradient(135deg, ${categoryConfig?.color}15, ${categoryConfig?.color}25)`,
-                    border: `1px solid ${categoryConfig?.color}20`,
-                    boxShadow: `0 4px 14px -2px ${categoryConfig?.color}25`,
+                    backgroundColor: `${categoryConfig?.color}20`,
+                    border: `2px solid ${categoryConfig?.color}40`,
                   }}
                 >
-                  <Award className="h-8 w-8" style={{ color: categoryConfig?.color, strokeWidth: 2 }} />
+                  <Award className="h-8 w-8" style={{ color: categoryConfig?.color }} />
                 </div>
               )}
             </div>
