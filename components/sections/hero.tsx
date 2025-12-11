@@ -6,10 +6,13 @@ import { Github, Linkedin, Play, ArrowRight, Sparkles, Award, TrendingUp } from 
 import { useCustomization } from "@/components/providers/customization-provider"
 import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
+import { siteConfig, hasSocialLink, getProfessionalStats, hasIntroVideo } from "@/lib/site-config"
+import { VideoModal } from "@/components/ui/video-modal"
 
 export function HeroSection() {
   const { customization } = useCustomization()
   const [isVisible, setIsVisible] = useState(false)
+  const [isVideoOpen, setIsVideoOpen] = useState(false)
 
   useEffect(() => {
     setIsVisible(true)
@@ -42,7 +45,7 @@ export function HeroSection() {
           <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-md border border-white/20 bg-gradient-to-r from-white/10 to-white/5">
             <Award className="w-4 h-4 text-yellow-400" />
             <span className="text-sm font-semibold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-              Senior Software Engineer
+              {siteConfig.personal.title}
             </span>
             <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
           </div>
@@ -65,30 +68,28 @@ export function HeroSection() {
           {/* Premium description */}
           <div className="space-y-4 max-w-2xl">
             <p className="text-xl md:text-2xl font-medium leading-relaxed text-text-secondary">
-              7+ years architecting scalable solutions across{" "}
+              {siteConfig.stats.yearsOfExperience}+ years architecting scalable solutions across{" "}
               <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">
                 fintech, healthcare, and SaaS
               </span>
-              . I lead teams, design systems, and deliver measurable business impact.
+              . {siteConfig.personal.shortBio}
             </p>
 
             {/* Key metrics */}
             <div className="flex flex-wrap gap-6 pt-4">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-text-success" />
-                <span className="font-bold text-2xl text-text-success">$50M+</span>
-                <span className="text-sm text-text-tertiary">Monthly Volume</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-text-info" />
-                <span className="font-bold text-2xl text-text-info">99.9%</span>
-                <span className="text-sm text-text-tertiary">Uptime</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-text-warning" />
-                <span className="font-bold text-2xl text-text-warning">150+</span>
-                <span className="text-sm text-text-tertiary">Projects</span>
-              </div>
+              {getProfessionalStats().map((stat, index) => {
+                const icons = [TrendingUp, Award, Sparkles]
+                const colors = ["text-text-success", "text-text-info", "text-text-warning"]
+                const Icon = icons[index % icons.length]
+                const color = colors[index % colors.length]
+                return (
+                  <div key={stat.label} className="flex items-center gap-2">
+                    <Icon className={`w-5 h-5 ${color}`} />
+                    <span className={`font-bold text-2xl ${color}`}>{stat.value}</span>
+                    <span className="text-sm text-text-tertiary">{stat.label}</span>
+                  </div>
+                )
+              })}
             </div>
           </div>
 
@@ -130,38 +131,42 @@ export function HeroSection() {
 
             {/* Social links */}
             <div className="flex items-center gap-3 ml-4">
-              <a
-                href="https://github.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300 hover:scale-110"
-                style={{
-                  backgroundColor: "hsl(var(--surface) / 0.1)",
-                  backdropFilter: "blur(20px)",
-                  border: "1px solid hsl(var(--border) / 0.2)",
-                  color: "hsl(var(--text-primary))",
-                }}
-                data-interactive="true"
-              >
-                <Github className="h-5 w-5 transition-transform group-hover:rotate-12" />
-                <span>GitHub</span>
-              </a>
-              <a
-                href="https://www.linkedin.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300 hover:scale-110"
-                style={{
-                  backgroundColor: "hsl(var(--surface) / 0.1)",
-                  backdropFilter: "blur(20px)",
-                  border: "1px solid hsl(var(--border) / 0.2)",
-                  color: "hsl(var(--text-primary))",
-                }}
-                data-interactive="true"
-              >
-                <Linkedin className="h-5 w-5 transition-transform group-hover:rotate-12" />
-                <span>LinkedIn</span>
-              </a>
+              {hasSocialLink("github") && (
+                <a
+                  href={siteConfig.social.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300 hover:scale-110"
+                  style={{
+                    backgroundColor: "hsl(var(--surface) / 0.1)",
+                    backdropFilter: "blur(20px)",
+                    border: "1px solid hsl(var(--border) / 0.2)",
+                    color: "hsl(var(--text-primary))",
+                  }}
+                  data-interactive="true"
+                >
+                  <Github className="h-5 w-5 transition-transform group-hover:rotate-12" />
+                  <span>GitHub</span>
+                </a>
+              )}
+              {hasSocialLink("linkedin") && (
+                <a
+                  href={siteConfig.social.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300 hover:scale-110"
+                  style={{
+                    backgroundColor: "hsl(var(--surface) / 0.1)",
+                    backdropFilter: "blur(20px)",
+                    border: "1px solid hsl(var(--border) / 0.2)",
+                    color: "hsl(var(--text-primary))",
+                  }}
+                  data-interactive="true"
+                >
+                  <Linkedin className="h-5 w-5 transition-transform group-hover:rotate-12" />
+                  <span>LinkedIn</span>
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -189,8 +194,8 @@ export function HeroSection() {
               }}
             >
               <Image
-                src="/professional-photo.jpg"
-                alt="Senior Software Engineer - Professional Headshot"
+                src={siteConfig.personal.avatarUrl}
+                alt={`${siteConfig.personal.name} - ${siteConfig.personal.title}`}
                 fill
                 className="object-cover rounded-full"
                 sizes="(max-width: 768px) 80vw, 500px"
@@ -209,22 +214,35 @@ export function HeroSection() {
             </div>
 
             {/* Premium play button with enhanced styling */}
-            <button
-              className="absolute bottom-6 right-6 group flex items-center gap-3 rounded-full px-6 py-3 font-semibold transition-all duration-500 hover:scale-110 hover:shadow-2xl"
-              style={{
-                background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%)",
-                backdropFilter: "blur(20px)",
-                boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)",
-                color: "hsl(var(--text-inverse))",
-              }}
-              aria-label="Play introduction video"
-            >
-              <Play className="h-5 w-5 transition-transform group-hover:scale-110" />
-              <span className="text-sm font-medium">Watch Intro</span>
-            </button>
+            {hasIntroVideo() && (
+              <button
+                onClick={() => setIsVideoOpen(true)}
+                className="absolute bottom-6 right-6 group flex items-center gap-3 rounded-full px-6 py-3 font-semibold transition-all duration-500 hover:scale-110 hover:shadow-2xl"
+                style={{
+                  background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%)",
+                  backdropFilter: "blur(20px)",
+                  boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)",
+                  color: "hsl(var(--text-inverse))",
+                }}
+                aria-label="Play introduction video"
+              >
+                <Play className="h-5 w-5 transition-transform group-hover:scale-110" />
+                <span className="text-sm font-medium">Watch Intro</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      {hasIntroVideo() && (
+        <VideoModal
+          isOpen={isVideoOpen}
+          onClose={() => setIsVideoOpen(false)}
+          videoUrl={siteConfig.personal.introVideoUrl}
+          title={`${siteConfig.personal.name} - Introduction`}
+        />
+      )}
 
       <style jsx>{`
         @keyframes gradient {

@@ -43,9 +43,9 @@ const BANNERS = [
 
 // Generic, high-res brand circles in case a logo is missing (cycled)
 const GENERIC_LOGOS = [
-  "/images/company-logos/generic-logo-1.png",
-  "/images/company-logos/generic-logo-2.png",
-  "/images/company-logos/generic-logo-3.png",
+  "/images/companies/acme-fintech-logo.png",
+  "/images/companies/healthcore-systems-logo.png",
+  "/images/companies/saasify-logo.png",
 ]
 
 // Company brand colors for premium theming

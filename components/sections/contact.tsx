@@ -10,6 +10,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Github, Linkedin, Download, Mail, Phone, MapPin, Calendar, Sparkles, Send, Award } from "lucide-react"
 import { useCustomization } from "@/components/providers/customization-provider"
 import { cn } from "@/lib/utils"
+import { 
+  siteConfig, 
+  getEmailLink, 
+  getPhoneLink, 
+  hasSocialLink,
+  getAvailabilityStatus,
+} from "@/lib/site-config"
 
 export function ContactSection() {
   const { customization } = useCustomization()
@@ -41,49 +48,51 @@ export function ContactSection() {
     {
       icon: Mail,
       label: "Email",
-      value: "hello@example.com",
-      href: "mailto:hello@example.com",
+      value: siteConfig.contact.email,
+      href: getEmailLink(),
       color: "from-blue-500 to-cyan-500",
     },
     {
       icon: Phone,
       label: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567",
+      value: siteConfig.contact.phone,
+      href: getPhoneLink(),
       color: "from-green-500 to-emerald-500",
     },
     {
       icon: MapPin,
       label: "Location",
-      value: "San Francisco, CA",
+      value: siteConfig.personal.location,
       href: "#",
       color: "from-purple-500 to-violet-500",
     },
   ]
 
   const socialLinks = [
-    {
+    ...(hasSocialLink("linkedin") ? [{
       icon: Linkedin,
       label: "LinkedIn",
-      href: "https://www.linkedin.com/",
+      href: siteConfig.social.linkedin,
       color: "#0077B5",
       description: "Professional network",
-    },
-    {
+    }] : []),
+    ...(hasSocialLink("github") ? [{
       icon: Github,
       label: "GitHub",
-      href: "https://github.com/",
+      href: siteConfig.social.github,
       color: "#333333",
       description: "Code repositories",
-    },
-    {
+    }] : []),
+    ...(hasSocialLink("calendly") ? [{
       icon: Calendar,
       label: "Schedule Call",
-      href: "https://calendly.com/",
+      href: siteConfig.social.calendly,
       color: "#006BFF",
       description: "Book a meeting",
-    },
+    }] : []),
   ]
+
+  const availability = getAvailabilityStatus()
 
   return (
     <section
@@ -402,7 +411,7 @@ export function ContactSection() {
                   Get a detailed overview of my experience, skills, and achievements.
                 </p>
                 <a
-                  href="/resume.pdf"
+                  href={siteConfig.personal.resumeUrl}
                   download
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-105"
                   style={{
@@ -421,22 +430,24 @@ export function ContactSection() {
             </div>
 
             {/* Availability status */}
-            <div
-              className="rounded-3xl p-6 backdrop-blur-md text-center"
-              style={{
-                background: "linear-gradient(135deg, hsl(var(--surface) / 0.1) 0%, hsl(var(--surface) / 0.05) 100%)",
-                border: "1px solid hsl(var(--border) / 0.2)",
-                boxShadow: "var(--shadow-card)",
-                backgroundColor: "hsl(var(--surface))",
-                borderColor: "hsl(var(--border))",
-              }}
-            >
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-sm font-bold text-text-success">Available for Projects</span>
+            {availability.isAvailable && (
+              <div
+                className="rounded-3xl p-6 backdrop-blur-md text-center"
+                style={{
+                  background: "linear-gradient(135deg, hsl(var(--surface) / 0.1) 0%, hsl(var(--surface) / 0.05) 100%)",
+                  border: "1px solid hsl(var(--border) / 0.2)",
+                  boxShadow: "var(--shadow-card)",
+                  backgroundColor: "hsl(var(--surface))",
+                  borderColor: "hsl(var(--border))",
+                }}
+              >
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-sm font-bold text-text-success">{availability.status}</span>
+                </div>
+                <p className="text-xs text-text-tertiary">Currently accepting new client projects for {availability.quarter}</p>
               </div>
-              <p className="text-xs text-text-tertiary">Currently accepting new client projects for Q1 2025</p>
-            </div>
+            )}
           </div>
         </div>
       </div>

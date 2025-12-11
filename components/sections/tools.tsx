@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo, useState, useCallback, useRef, useEffect } from "react"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { tools } from "@/lib/data"
 import { useCustomization } from "@/components/providers/customization-provider"
@@ -28,11 +27,18 @@ import {
   HardDrive,
   Search,
   Workflow,
-  Activity,
   Sparkles,
   Award,
   Target,
   Rocket,
+  Send,
+  FileCode,
+  Figma,
+  Slack,
+  Layout,
+  Cpu,
+  Box,
+  type LucideIcon,
 } from "lucide-react"
 
 type Category = "All" | "Development" | "Design" | "DevOps" | "Communication" | "Productivity" | "Database"
@@ -85,23 +91,23 @@ const proficiencyConfig = {
   },
 }
 
-// Premium tool-specific icons from Lucide React
-const toolIcons: Record<string, any> = {
+// Clean Lucide icons for all tools - no backgrounds, crisp SVG
+const toolIcons: Record<string, LucideIcon> = {
   "VS Code": Monitor,
   GitHub: Github,
-  Postman: Activity,
+  Postman: Send,
   React: Layers,
-  "Next.js": Layers,
-  TypeScript: Code2,
+  "Next.js": Layout,
+  TypeScript: FileCode,
   "Node.js": Terminal,
   Python: Code2,
-  Figma: Palette,
-  Framer: Palette,
+  Figma: Figma,
+  Framer: Box,
   Docker: Container,
   Vercel: Cloud,
   AWS: Cloud,
-  Kubernetes: Server,
-  Slack: MessageSquare,
+  Kubernetes: Cpu,
+  Slack: Slack,
   Notion: Settings,
   Linear: Workflow,
   Raycast: Search,
@@ -123,148 +129,172 @@ function PremiumToolCard({ tool, index, theme }: { tool: ToolItem; index: number
   const ToolIcon = toolIcons[tool.name] || Code2
 
   // Premium brand colors with enhanced gradients
-  const brandColors: Record<string, { primary: string; secondary: string; background: string; gradient: string }> = {
+  const brandColors: Record<string, { primary: string; secondary: string; accent: string; background: string; gradient: string }> = {
     "VS Code": {
       primary: "#007ACC",
       secondary: "#1177BB",
+      accent: "#40A9FF",
       background: "linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)",
       gradient: "linear-gradient(135deg, #007ACC 0%, #1177BB 100%)",
     },
     Figma: {
       primary: "#F24E1E",
       secondary: "#FF6B35",
+      accent: "#A259FF",
       background: "linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)",
-      gradient: "linear-gradient(135deg, #F24E1E 0%, #FF6B35 100%)",
+      gradient: "linear-gradient(135deg, #F24E1E 0%, #A259FF 50%, #0ACF83 100%)",
     },
     GitHub: {
-      primary: "#181717",
-      secondary: "#333333",
-      background: "linear-gradient(135deg, #F5F5F5 0%, #EEEEEE 100%)",
-      gradient: "linear-gradient(135deg, #181717 0%, #333333 100%)",
+      primary: "#238636",
+      secondary: "#2EA043",
+      accent: "#58A6FF",
+      background: "linear-gradient(135deg, #0D1117 0%, #161B22 100%)",
+      gradient: "linear-gradient(135deg, #238636 0%, #2EA043 100%)",
     },
     Postman: {
       primary: "#FF6C37",
       secondary: "#FF8A50",
+      accent: "#FFB74D",
       background: "linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)",
       gradient: "linear-gradient(135deg, #FF6C37 0%, #FF8A50 100%)",
     },
     Docker: {
       primary: "#2496ED",
       secondary: "#0085D1",
+      accent: "#384D54",
       background: "linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)",
       gradient: "linear-gradient(135deg, #2496ED 0%, #0085D1 100%)",
     },
     Slack: {
-      primary: "#4A154B",
-      secondary: "#611F69",
+      primary: "#E01E5A",
+      secondary: "#36C5F0",
+      accent: "#2EB67D",
       background: "linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%)",
-      gradient: "linear-gradient(135deg, #4A154B 0%, #611F69 100%)",
+      gradient: "linear-gradient(135deg, #E01E5A 0%, #36C5F0 50%, #2EB67D 100%)",
     },
     Notion: {
       primary: "#000000",
       secondary: "#333333",
+      accent: "#FA5252",
       background: "linear-gradient(135deg, #F5F5F5 0%, #EEEEEE 100%)",
       gradient: "linear-gradient(135deg, #000000 0%, #333333 100%)",
     },
     Linear: {
       primary: "#5E6AD2",
       secondary: "#7B83EB",
+      accent: "#8B5CF6",
       background: "linear-gradient(135deg, #EDE7F6 0%, #D1C4E9 100%)",
       gradient: "linear-gradient(135deg, #5E6AD2 0%, #7B83EB 100%)",
     },
     Vercel: {
       primary: "#000000",
       secondary: "#333333",
+      accent: "#0070F3",
       background: "linear-gradient(135deg, #F5F5F5 0%, #EEEEEE 100%)",
       gradient: "linear-gradient(135deg, #000000 0%, #333333 100%)",
     },
     Framer: {
       primary: "#0055FF",
-      secondary: "#3366FF",
+      secondary: "#00AAFF",
+      accent: "#FF0080",
       background: "linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)",
-      gradient: "linear-gradient(135deg, #0055FF 0%, #3366FF 100%)",
+      gradient: "linear-gradient(135deg, #0055FF 0%, #00AAFF 50%, #FF0080 100%)",
     },
     Raycast: {
       primary: "#FF6363",
       secondary: "#FF8A80",
+      accent: "#7C3AED",
       background: "linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%)",
-      gradient: "linear-gradient(135deg, #FF6363 0%, #FF8A80 100%)",
+      gradient: "linear-gradient(135deg, #FF6363 0%, #7C3AED 100%)",
     },
     TablePlus: {
       primary: "#3B82F6",
       secondary: "#60A5FA",
+      accent: "#A78BFA",
       background: "linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)",
       gradient: "linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%)",
     },
     React: {
       primary: "#61DAFB",
       secondary: "#21CBF3",
+      accent: "#087EA4",
       background: "linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%)",
-      gradient: "linear-gradient(135deg, #61DAFB 0%, #21CBF3 100%)",
+      gradient: "linear-gradient(135deg, #61DAFB 0%, #087EA4 100%)",
     },
     "Next.js": {
       primary: "#000000",
       secondary: "#333333",
+      accent: "#0070F3",
       background: "linear-gradient(135deg, #F5F5F5 0%, #EEEEEE 100%)",
       gradient: "linear-gradient(135deg, #000000 0%, #333333 100%)",
     },
     TypeScript: {
       primary: "#3178C6",
       secondary: "#5B9BD5",
+      accent: "#235A97",
       background: "linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)",
       gradient: "linear-gradient(135deg, #3178C6 0%, #5B9BD5 100%)",
     },
     "Node.js": {
       primary: "#339933",
       secondary: "#68BB59",
+      accent: "#215732",
       background: "linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 100%)",
       gradient: "linear-gradient(135deg, #339933 0%, #68BB59 100%)",
     },
     Python: {
       primary: "#3776AB",
-      secondary: "#4B8BBE",
+      secondary: "#FFD43B",
+      accent: "#4B8BBE",
       background: "linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)",
-      gradient: "linear-gradient(135deg, #3776AB 0%, #4B8BBE 100%)",
+      gradient: "linear-gradient(135deg, #3776AB 0%, #FFD43B 100%)",
     },
     PostgreSQL: {
       primary: "#336791",
       secondary: "#4A90A4",
+      accent: "#0064A5",
       background: "linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)",
       gradient: "linear-gradient(135deg, #336791 0%, #4A90A4 100%)",
     },
     MySQL: {
       primary: "#4479A1",
-      secondary: "#5B9BD5",
+      secondary: "#F29111",
+      accent: "#5B9BD5",
       background: "linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)",
-      gradient: "linear-gradient(135deg, #4479A1 0%, #5B9BD5 100%)",
+      gradient: "linear-gradient(135deg, #4479A1 0%, #F29111 100%)",
     },
     MongoDB: {
       primary: "#47A248",
       secondary: "#68BB59",
+      accent: "#13AA52",
       background: "linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 100%)",
       gradient: "linear-gradient(135deg, #47A248 0%, #68BB59 100%)",
     },
     Redis: {
       primary: "#DC382D",
       secondary: "#F44336",
+      accent: "#A41E11",
       background: "linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%)",
       gradient: "linear-gradient(135deg, #DC382D 0%, #F44336 100%)",
     },
     AWS: {
       primary: "#FF9900",
-      secondary: "#FFB74D",
+      secondary: "#232F3E",
+      accent: "#FFB74D",
       background: "linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%)",
-      gradient: "linear-gradient(135deg, #FF9900 0%, #FFB74D 100%)",
+      gradient: "linear-gradient(135deg, #FF9900 0%, #232F3E 100%)",
     },
     GraphQL: {
       primary: "#E10098",
       secondary: "#F48FB1",
+      accent: "#B7178C",
       background: "linear-gradient(135deg, #FCE4EC 0%, #F8BBD9 100%)",
       gradient: "linear-gradient(135deg, #E10098 0%, #F48FB1 100%)",
     },
     Kubernetes: {
       primary: "#326CE5",
       secondary: "#5B9BD5",
+      accent: "#2B5797",
       background: "linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)",
       gradient: "linear-gradient(135deg, #326CE5 0%, #5B9BD5 100%)",
     },
@@ -273,9 +303,18 @@ function PremiumToolCard({ tool, index, theme }: { tool: ToolItem; index: number
   const toolBrandColor = brandColors[tool.name] || {
     primary: "#6B7280",
     secondary: "#9CA3AF",
+    accent: "#4B5563",
     background: "linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%)",
     gradient: "linear-gradient(135deg, #6B7280 0%, #9CA3AF 100%)",
   }
+
+  // Proficiency percentage for progress bar
+  const proficiencyPercent = {
+    Expert: 95,
+    Advanced: 80,
+    Intermediate: 60,
+    Beginner: 35,
+  }[tool.proficiency] || 50
 
   // Intersection observer for staggered animations
   useEffect(() => {
@@ -301,14 +340,17 @@ function PremiumToolCard({ tool, index, theme }: { tool: ToolItem; index: number
   const handleMouseEnter = useCallback(() => setIsHovered(true), [])
   const handleMouseLeave = useCallback(() => setIsHovered(false), [])
 
+  // Category icon
+  const CategoryIcon = categoryIcons[tool.category as keyof typeof categoryIcons] || Code2
+
   return (
     <div
       ref={cardRef}
       className={cn(
-        "group relative overflow-hidden rounded-3xl transition-all duration-500 ease-out",
+        "group relative rounded-3xl transition-all duration-500 ease-out",
         "transform-gpu will-change-transform cursor-pointer h-[220px]",
         inView ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0",
-        isHovered && "scale-[1.03] -translate-y-2",
+        isHovered ? "scale-[1.02] -translate-y-3 z-50" : "z-10 overflow-hidden",
       )}
       style={{
         background: isDark
@@ -327,7 +369,7 @@ function PremiumToolCard({ tool, index, theme }: { tool: ToolItem; index: number
     >
       {/* Premium gradient overlay */}
       <div
-        className="absolute inset-0 opacity-0 transition-opacity duration-500"
+        className="absolute inset-0 opacity-0 transition-opacity duration-500 rounded-3xl"
         style={{
           background: `linear-gradient(135deg, ${toolBrandColor.primary}08, ${toolBrandColor.secondary}15)`,
           opacity: isHovered ? 1 : 0,
@@ -360,55 +402,22 @@ function PremiumToolCard({ tool, index, theme }: { tool: ToolItem; index: number
 
       {/* Main content */}
       <div className="p-6 h-full flex flex-col justify-center items-center text-center relative z-10">
-        {/* Premium logo container */}
+        {/* Clean icon container - using Lucide icons only */}
         <div className="flex justify-center mb-5">
           <div
-            className="w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 relative overflow-hidden"
+            className="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 relative overflow-hidden"
             style={{
-              background: toolBrandColor.background,
-              transform: isHovered ? "scale(1.1) rotate(5deg)" : "scale(1)",
-              boxShadow: isHovered ? `0 15px 35px -5px ${toolBrandColor.primary}40` : "none",
+              background: `linear-gradient(135deg, ${toolBrandColor.primary}15, ${toolBrandColor.secondary}25)`,
+              transform: isHovered ? "scale(1.1)" : "scale(1)",
+              boxShadow: isHovered ? `0 12px 28px -4px ${toolBrandColor.primary}35` : "none",
+              border: `1px solid ${toolBrandColor.primary}20`,
             }}
           >
-            {/* Animated background pattern */}
-            <div
-              className="absolute inset-0 opacity-20"
-              style={{
-                background: `radial-gradient(circle at 30% 30%, ${toolBrandColor.primary}40, transparent 50%)`,
-                animation: isHovered ? "pulse 2s infinite" : "none",
-              }}
-            />
-
-            {tool.logoSrc && tool.logoSrc !== "/placeholder.svg" ? (
-              <Image
-                src={tool.logoSrc || "/placeholder.svg"}
-                alt={`${tool.name} logo`}
-                width={36}
-                height={36}
-                className="object-contain relative z-10 transition-transform duration-300"
-                style={{
-                  filter: isHovered ? "drop-shadow(0 5px 15px rgba(0,0,0,0.2))" : "none",
-                }}
-                onError={(e) => {
-                  e.currentTarget.style.display = "none"
-                  const iconContainer = e.currentTarget.parentElement
-                  if (iconContainer) {
-                    const icon = iconContainer.querySelector(".fallback-icon")
-                    if (icon) {
-                      icon.classList.remove("hidden")
-                    }
-                  }
-                }}
-              />
-            ) : null}
             <ToolIcon
-              className={cn(
-                "w-9 h-9 fallback-icon relative z-10 transition-all duration-300",
-                tool.logoSrc && tool.logoSrc !== "/placeholder.svg" ? "hidden" : "",
-              )}
+              className="w-8 h-8 relative z-10 transition-all duration-300"
               style={{
                 color: toolBrandColor.primary,
-                filter: isHovered ? "drop-shadow(0 5px 15px rgba(0,0,0,0.2))" : "none",
+                strokeWidth: 1.5,
               }}
             />
           </div>
@@ -447,101 +456,192 @@ function PremiumToolCard({ tool, index, theme }: { tool: ToolItem; index: number
           </span>
         </div>
 
-        {/* Premium hover overlay */}
+        {/* ✨ REFINED HOVER OVERLAY - Better UX ✨ */}
         <div
           className={cn(
-            "absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-500",
-            "backdrop-blur-xl rounded-3xl",
+            "absolute top-0 left-0 right-0 flex flex-col transition-all duration-400 rounded-3xl overflow-hidden",
             isHovered ? "opacity-100" : "opacity-0 pointer-events-none",
           )}
           style={{
-            background: isDark
-              ? "linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.9) 100%)"
-              : "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.95) 100%)",
-            backdropFilter: "blur(20px)",
+            minHeight: "220px",
           }}
         >
-          <div className="text-center max-w-full">
-            {/* Premium logo in hover */}
-            <div className="mb-4">
+          {/* Clean gradient background */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: isDark
+                ? `linear-gradient(160deg, rgba(18, 18, 24, 0.98) 0%, rgba(24, 24, 32, 0.99) 100%)`
+                : `linear-gradient(160deg, rgba(255, 255, 255, 0.99) 0%, rgba(250, 251, 253, 0.99) 100%)`,
+            }}
+          />
+
+          {/* Subtle accent glow - top corner */}
+          <div
+            className="absolute top-0 right-0 w-32 h-32 transition-opacity duration-500"
+            style={{
+              background: `radial-gradient(circle at top right, ${toolBrandColor.primary}15 0%, transparent 70%)`,
+              opacity: isHovered ? 1 : 0,
+            }}
+          />
+
+          {/* Elegant left accent bar */}
+          <div
+            className="absolute left-0 top-4 bottom-4 w-1 rounded-full transition-all duration-500"
+            style={{
+              background: toolBrandColor.gradient,
+              opacity: isHovered ? 1 : 0,
+              transform: isHovered ? "scaleY(1)" : "scaleY(0)",
+              transformOrigin: "top",
+              boxShadow: `0 0 12px ${toolBrandColor.primary}40`,
+            }}
+          />
+
+          {/* Content container */}
+          <div className="relative z-10 p-5 pl-6 flex flex-col h-full">
+            {/* Header - Icon + Title inline */}
+            <div
+              className="flex items-center gap-3 mb-4 transition-all duration-400"
+              style={{
+                transform: isHovered ? "translateY(0)" : "translateY(-8px)",
+                opacity: isHovered ? 1 : 0,
+                transitionDelay: "50ms",
+              }}
+            >
+              {/* Compact icon */}
               <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 relative overflow-hidden"
+                className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{
                   background: toolBrandColor.gradient,
-                  boxShadow: `0 10px 25px -5px ${toolBrandColor.primary}40`,
+                  boxShadow: `0 4px 14px -2px ${toolBrandColor.primary}40`,
                 }}
               >
-                <div
-                  className="absolute inset-0 opacity-30"
-                  style={{
-                    background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 70%)",
-                  }}
-                />
-                {tool.logoSrc && tool.logoSrc !== "/placeholder.svg" ? (
-                  <Image
-                    src={tool.logoSrc || "/placeholder.svg"}
-                    alt={`${tool.name} logo`}
-                    width={28}
-                    height={28}
-                    className="object-contain relative z-10"
-                    style={{ filter: "brightness(0) invert(1)" }}
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none"
-                      const iconContainer = e.currentTarget.parentElement
-                      if (iconContainer) {
-                        const icon = iconContainer.querySelector(".hover-fallback-icon")
-                        if (icon) {
-                          icon.classList.remove("hidden")
-                        }
-                      }
-                    }}
-                  />
-                ) : null}
-                <ToolIcon
-                  className={cn(
-                    "w-7 h-7 hover-fallback-icon relative z-10 text-white",
-                    tool.logoSrc && tool.logoSrc !== "/placeholder.svg" ? "hidden" : "",
-                  )}
-                />
+                <ToolIcon className="w-5 h-5 text-white" style={{ strokeWidth: 2.5 }} />
               </div>
 
-              {/* Premium tool name */}
-              <h4 className="font-bold text-xl mb-2" style={{ color: "var(--fg)" }}>
-                {tool.name}
-              </h4>
-
-              {/* Enhanced experience display */}
-              <div className="flex items-center justify-center gap-3 mb-4">
-                {config && <config.icon className="w-5 h-5" style={{ color: config.color }} />}
-                <div className="text-center">
-                  <p className="text-sm font-bold" style={{ color: toolBrandColor.primary }}>
+              {/* Title + Quick stats */}
+              <div className="flex-1 min-w-0">
+                <h4
+                  className="font-bold text-base leading-tight truncate"
+                  style={{ color: isDark ? "#ffffff" : "#0f0f0f" }}
+                >
+                  {tool.name}
+                </h4>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span
+                    className="text-[11px] font-semibold px-1.5 py-0.5 rounded"
+                    style={{
+                      background: `${config?.color}18`,
+                      color: config?.color,
+                    }}
+                  >
                     {tool.proficiency}
-                  </p>
-                  <p className="text-xs opacity-75" style={{ color: "var(--fg-secondary)" }}>
-                    {tool.yearsUsed} years mastery
-                  </p>
+                  </span>
+                  <span
+                    className="text-[11px] font-medium"
+                    style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.45)" }}
+                  >
+                    •
+                  </span>
+                  <span
+                    className="text-[11px] font-medium"
+                    style={{ color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.45)" }}
+                  >
+                    {tool.yearsUsed}+ years
+                  </span>
                 </div>
-                <Target className="w-5 h-5" style={{ color: config?.color }} />
               </div>
             </div>
 
-            {/* Premium description */}
-            <p
-              className="text-sm leading-relaxed px-2 font-medium"
+            {/* Skill level visualization - Dots */}
+            <div
+              className="flex items-center gap-3 mb-4 transition-all duration-400"
               style={{
-                color: isDark ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.8)",
-                lineHeight: "1.5",
+                transform: isHovered ? "translateY(0)" : "translateY(-6px)",
+                opacity: isHovered ? 1 : 0,
+                transitionDelay: "100ms",
+              }}
+            >
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((dot) => (
+                  <div
+                    key={dot}
+                    className="w-2 h-2 rounded-full transition-all duration-300"
+                    style={{
+                      background: dot <= (config?.dots || 0)
+                        ? toolBrandColor.gradient
+                        : isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.08)",
+                      boxShadow: dot <= (config?.dots || 0)
+                        ? `0 0 6px ${toolBrandColor.primary}50`
+                        : "none",
+                      transitionDelay: `${150 + dot * 50}ms`,
+                      transform: isHovered && dot <= (config?.dots || 0) ? "scale(1)" : "scale(0.8)",
+                    }}
+                  />
+                ))}
+              </div>
+              <span
+                className="text-[10px] font-semibold uppercase tracking-wider"
+                style={{ color: isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.35)" }}
+              >
+                Skill Level
+              </span>
+            </div>
+
+            {/* Description - Main content */}
+            <p
+              className="text-[13px] leading-relaxed flex-1 transition-all duration-400"
+              style={{
+                color: isDark ? "rgba(255, 255, 255, 0.72)" : "rgba(0, 0, 0, 0.62)",
+                transform: isHovered ? "translateY(0)" : "translateY(-4px)",
+                opacity: isHovered ? 1 : 0,
+                transitionDelay: "150ms",
+                lineHeight: "1.65",
               }}
             >
               {tool.description}
             </p>
 
-            {/* Call to action hint */}
-            <div className="mt-4 flex items-center justify-center gap-2 opacity-75">
-              <Rocket className="w-4 h-4" style={{ color: toolBrandColor.primary }} />
-              <span className="text-xs font-medium" style={{ color: "var(--fg-secondary)" }}>
-                Production Ready
-              </span>
+            {/* Footer - Category chip */}
+            <div
+              className="flex items-center justify-between mt-auto pt-3 transition-all duration-400"
+              style={{
+                borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`,
+                transform: isHovered ? "translateY(0)" : "translateY(-2px)",
+                opacity: isHovered ? 1 : 0,
+                transitionDelay: "200ms",
+              }}
+            >
+              <div
+                className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-medium"
+                style={{
+                  background: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.03)",
+                  color: isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
+                }}
+              >
+                <CategoryIcon className="w-3 h-3" style={{ color: toolBrandColor.primary }} />
+                {tool.category}
+              </div>
+
+              {/* Hover indicator */}
+              <div
+                className="flex items-center gap-1 text-[10px] font-medium transition-all duration-300"
+                style={{
+                  color: toolBrandColor.primary,
+                  opacity: isHovered ? 0.7 : 0,
+                  transform: isHovered ? "translateX(0)" : "translateX(4px)",
+                  transitionDelay: "300ms",
+                }}
+              >
+                <span>Active</span>
+                <div
+                  className="w-1.5 h-1.5 rounded-full animate-pulse"
+                  style={{
+                    background: toolBrandColor.primary,
+                    boxShadow: `0 0 6px ${toolBrandColor.primary}`,
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
