@@ -1,24 +1,40 @@
 "use client"
 
-import Image from "next/image"
 import { cn } from "@/lib/utils"
+import {
+  Layout,
+  Layers,
+  FileCode,
+  Palette,
+  Terminal,
+  Database,
+  GitBranch,
+  Activity,
+  Cloud,
+  Container,
+  Cpu,
+  HardDrive,
+  type LucideIcon,
+} from "lucide-react"
 
-const logos = [
-  { src: "/logos/nextjs.png", alt: "Next.js" },
-  { src: "/logos/react.png", alt: "React" },
-  { src: "/logos/typescript.png", alt: "TypeScript" },
-  { src: "/logos/tailwind.png", alt: "Tailwind CSS" },
-  { src: "/logos/node.png", alt: "Node.js" },
-  { src: "/logos/postgres.png", alt: "PostgreSQL" },
-  { src: "/logos/graphql.png", alt: "GraphQL" },
-  { src: "/logos/kafka.png", alt: "Kafka" },
-  { src: "/logos/aws.png", alt: "AWS" },
-  { src: "/logos/docker.png", alt: "Docker" },
-  { src: "/logos/kubernetes.png", alt: "Kubernetes" },
-  { src: "/logos/redis.png", alt: "Redis" },
+type LogoItem = { icon: LucideIcon; alt: string; color: string }
+
+const logos: LogoItem[] = [
+  { icon: Layout, alt: "Next.js", color: "#000000" },
+  { icon: Layers, alt: "React", color: "#61DAFB" },
+  { icon: FileCode, alt: "TypeScript", color: "#3178C6" },
+  { icon: Palette, alt: "Tailwind CSS", color: "#06B6D4" },
+  { icon: Terminal, alt: "Node.js", color: "#339933" },
+  { icon: Database, alt: "PostgreSQL", color: "#336791" },
+  { icon: GitBranch, alt: "GraphQL", color: "#E10098" },
+  { icon: Activity, alt: "Kafka", color: "#231F20" },
+  { icon: Cloud, alt: "AWS", color: "#FF9900" },
+  { icon: Container, alt: "Docker", color: "#2496ED" },
+  { icon: Cpu, alt: "Kubernetes", color: "#326CE5" },
+  { icon: HardDrive, alt: "Redis", color: "#DC382D" },
 ]
 
-// Simple marquee with clean animation
+// Simple marquee with clean Lucide icons animation
 export function SkillsMarqueeSection({ className = "" }: { className?: string }) {
   const row = [...logos, ...logos]
   return (
@@ -31,22 +47,28 @@ export function SkillsMarqueeSection({ className = "" }: { className?: string })
 
       <div className="container mx-auto">
         <div
-          className="flex min-w-max items-center gap-8 opacity-80 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300"
+          className="flex min-w-max items-center gap-8 opacity-80 hover:opacity-100 transition-all duration-300"
           style={{
             animation: "marquee 26s linear infinite",
           }}
         >
-          {row.map((l, i) => (
-            <div key={i} className="relative h-8 w-28">
-              <Image
-                src={l.src || "/placeholder.svg"}
-                alt={`${l.alt} logo`}
-                fill
-                sizes="112px"
-                className="object-contain"
-              />
-            </div>
-          ))}
+          {row.map((l, i) => {
+            const Icon = l.icon
+            return (
+              <div key={i} className="relative h-8 w-28 flex items-center justify-center gap-2">
+                <Icon
+                  className="w-6 h-6 transition-all duration-300"
+                  style={{
+                    color: l.color,
+                    strokeWidth: 1.5,
+                  }}
+                />
+                <span className="text-sm font-medium" style={{ color: "var(--fg-secondary)" }}>
+                  {l.alt}
+                </span>
+              </div>
+            )
+          })}
         </div>
       </div>
 
