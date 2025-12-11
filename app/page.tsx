@@ -1,4 +1,5 @@
 import { HeroSection } from "@/components/sections/hero"
+import { AboutSection } from "@/components/sections/about"
 import { AchievementsSection } from "@/components/sections/achievements"
 import { SkillsSection } from "@/components/sections/skills"
 import { TechnologiesSection } from "@/components/sections/technologies"
@@ -15,6 +16,11 @@ import { CustomizationProvider } from "@/components/providers/customization-prov
 import { CustomizerPanel } from "@/components/customizer-panel"
 import { CustomCursor } from "@/components/custom-cursor"
 import { FloatingCTA } from "@/components/floating-cta"
+import { Navigation } from "@/components/navigation"
+import { Footer } from "@/components/footer"
+import { ScrollToTop } from "@/components/scroll-to-top"
+import { SectionErrorBoundary } from "@/components/error-boundary"
+import { HeroSkeleton, GridSkeleton, ProjectCardSkeleton, StatsSkeleton } from "@/components/ui/skeleton-loader"
 
 export const metadata: Metadata = {
   title: "Senior Software Engineer Portfolio",
@@ -45,7 +51,8 @@ export default function HomePage() {
   return (
     <CustomizationProvider>
       <CustomCursor />
-      <main className="scroll-smooth" style={{ backgroundColor: "var(--bg)" }}>
+      <Navigation />
+      <main className="scroll-smooth pt-20" style={{ backgroundColor: "var(--bg)" }}>
         <JsonLd />
         <div
           className="min-h-screen"
@@ -53,21 +60,63 @@ export default function HomePage() {
             backgroundColor: "var(--surface)",
           }}
         >
-          <Suspense fallback={<div className="p-8">Loading...</div>}>
-            <HeroSection />
-            <AchievementsSection />
-            <SkillsSection />
-            <TechnologiesSection />
-            <ToolsSection />
-            <ExperienceSection />
-            <ProjectsSection />
-            <CertificationsSection />
-            <TestimonialsMarqueeSection />
-            <BlogPreviewSection />
-            <ContactSection />
+          <Suspense fallback={<HeroSkeleton />}>
+            <SectionErrorBoundary sectionName="Hero">
+              <HeroSection />
+            </SectionErrorBoundary>
           </Suspense>
+          
+          <SectionErrorBoundary sectionName="About">
+            <AboutSection />
+          </SectionErrorBoundary>
+          
+          <Suspense fallback={<StatsSkeleton count={4} />}>
+            <SectionErrorBoundary sectionName="Achievements">
+              <AchievementsSection />
+            </SectionErrorBoundary>
+          </Suspense>
+          
+          <SectionErrorBoundary sectionName="Skills">
+            <SkillsSection />
+          </SectionErrorBoundary>
+          
+          <SectionErrorBoundary sectionName="Technologies">
+            <TechnologiesSection />
+          </SectionErrorBoundary>
+          
+          <SectionErrorBoundary sectionName="Tools">
+            <ToolsSection />
+          </SectionErrorBoundary>
+          
+          <SectionErrorBoundary sectionName="Experience">
+            <ExperienceSection />
+          </SectionErrorBoundary>
+          
+          <Suspense fallback={<GridSkeleton count={3} CardComponent={ProjectCardSkeleton} />}>
+            <SectionErrorBoundary sectionName="Projects">
+              <ProjectsSection />
+            </SectionErrorBoundary>
+          </Suspense>
+          
+          <SectionErrorBoundary sectionName="Certifications">
+            <CertificationsSection />
+          </SectionErrorBoundary>
+          
+          <SectionErrorBoundary sectionName="Testimonials">
+            <TestimonialsMarqueeSection />
+          </SectionErrorBoundary>
+          
+          <SectionErrorBoundary sectionName="Blog">
+            <BlogPreviewSection />
+          </SectionErrorBoundary>
+          
+          <SectionErrorBoundary sectionName="Contact">
+            <ContactSection />
+          </SectionErrorBoundary>
+          <Footer />
           <CustomizerPanel />
           <FloatingCTA />
+          <ScrollToTop />
         </div>
       </main>
     </CustomizationProvider>
