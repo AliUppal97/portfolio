@@ -179,11 +179,11 @@ function PremiumCompanyCard({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Premium gradient overlay */}
+      {/* Clean gradient overlay - matching Professional Toolkit style */}
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{
-          background: `linear-gradient(135deg, ${companyColors.primary}08, ${companyColors.secondary}15)`,
+          background: `linear-gradient(160deg, ${companyColors.primary}05 0%, ${companyColors.secondary}08 100%)`,
         }}
       />
 
@@ -265,25 +265,25 @@ function PremiumCompanyCard({
 
       {/* Content section */}
       <div className="p-8 relative z-10">
-        {/* Impact metrics grid */}
+        {/* Impact metrics grid - Clean icon containers */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {metrics.map((metric, i) => (
             <div
               key={metric.label}
-              className="text-center p-4 rounded-2xl backdrop-blur-md transition-all duration-300 hover:scale-105"
+              className="group text-center p-4 rounded-2xl backdrop-blur-md transition-all duration-300 hover:scale-105"
               style={{
                 background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
                 border: "1px solid rgba(255,255,255,0.1)",
               }}
             >
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2"
+                className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-transform duration-300 group-hover:scale-110"
                 style={{
                   background: `linear-gradient(135deg, ${metric.color}, ${metric.color}90)`,
-                  boxShadow: `0 4px 12px ${metric.color}30`,
+                  boxShadow: `0 4px 14px -2px ${metric.color}35`,
                 }}
               >
-                <metric.icon className="w-5 h-5 text-white" />
+                <metric.icon className="w-5 h-5 text-white" style={{ strokeWidth: 2.5 }} />
               </div>
               <div className="text-lg font-bold" style={{ color: metric.color }}>
                 {metric.value}
@@ -467,20 +467,20 @@ function PremiumExperienceModal({
                 {metrics.map((metric, i) => (
                   <div
                     key={metric.label}
-                    className="text-center p-6 rounded-3xl backdrop-blur-md transition-all duration-300 hover:scale-105"
+                    className="group text-center p-6 rounded-3xl backdrop-blur-md transition-all duration-300 hover:scale-105"
                     style={{
-                      background: `linear-gradient(135deg, ${metric.color}10, ${metric.color}05)`,
-                      border: `1px solid ${metric.color}20`,
+                      background: `linear-gradient(160deg, ${metric.color}08, ${metric.color}03)`,
+                      border: `1px solid ${metric.color}15`,
                     }}
                   >
                     <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"
                       style={{
                         background: `linear-gradient(135deg, ${metric.color}, ${metric.color}90)`,
-                        boxShadow: `0 8px 25px -5px ${metric.color}40`,
+                        boxShadow: `0 4px 14px -2px ${metric.color}35`,
                       }}
                     >
-                      <metric.icon className="w-7 h-7 text-white" />
+                      <metric.icon className="w-7 h-7 text-white" style={{ strokeWidth: 2.5 }} />
                     </div>
                     <div className="text-2xl font-bold mb-2" style={{ color: metric.color }}>
                       {metric.value}
@@ -746,13 +746,13 @@ export function ExperienceSection() {
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative z-10">
                 <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"
                   style={{
                     background: `linear-gradient(135deg, ${stat.color}, ${stat.color}90)`,
-                    boxShadow: `0 8px 25px -5px ${stat.color}40`,
+                    boxShadow: `0 4px 14px -2px ${stat.color}35`,
                   }}
                 >
-                  <stat.icon className="w-6 h-6 text-white" />
+                  <stat.icon className="w-6 h-6 text-white" style={{ strokeWidth: 2.5 }} />
                 </div>
                 <div className="text-3xl font-bold mb-2" style={{ color: stat.color }}>
                   {stat.value}
