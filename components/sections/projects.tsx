@@ -141,9 +141,16 @@ export function ProjectsSection() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                  {/* Floating project icon */}
-                  <div className="absolute top-4 left-4 w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                    <ProjectIcon className="w-6 h-6 text-white" />
+                  {/* Floating project icon - Clean style */}
+                  <div 
+                    className="absolute top-4 left-4 w-12 h-12 rounded-2xl backdrop-blur-md flex items-center justify-center"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.15))",
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      boxShadow: "0 4px 14px -2px rgba(0,0,0,0.15)",
+                    }}
+                  >
+                    <ProjectIcon className="w-6 h-6 text-white" style={{ strokeWidth: 2.5 }} />
                   </div>
 
                   {/* Play button overlay */}
