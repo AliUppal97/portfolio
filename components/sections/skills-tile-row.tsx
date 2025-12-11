@@ -1,26 +1,40 @@
 "use client"
 
-import Image from "next/image"
 import { cn } from "@/lib/utils"
+import {
+  Layout,
+  Layers,
+  FileCode,
+  Palette,
+  Terminal,
+  GitBranch,
+  Database,
+  Activity,
+  Cloud,
+  Container,
+  Cpu,
+  HardDrive,
+  type LucideIcon,
+} from "lucide-react"
 
-type Tile = { src: string; alt: string }
+type Tile = { icon: LucideIcon; alt: string; color: string }
 
 const techTiles: Tile[] = [
-  { src: "/logos/nextjs.png", alt: "Next.js" },
-  { src: "/logos/react.png", alt: "React" },
-  { src: "/logos/typescript.png", alt: "TypeScript" },
-  { src: "/logos/tailwind.png", alt: "Tailwind CSS" },
-  { src: "/logos/node.png", alt: "Node.js" },
-  { src: "/logos/graphql.png", alt: "GraphQL" },
-  { src: "/logos/postgres.png", alt: "PostgreSQL" },
-  { src: "/logos/kafka.png", alt: "Kafka" },
-  { src: "/logos/aws.png", alt: "AWS" },
-  { src: "/logos/docker.png", alt: "Docker" },
-  { src: "/logos/kubernetes.png", alt: "Kubernetes" },
-  { src: "/logos/redis.png", alt: "Redis" },
+  { icon: Layout, alt: "Next.js", color: "#000000" },
+  { icon: Layers, alt: "React", color: "#61DAFB" },
+  { icon: FileCode, alt: "TypeScript", color: "#3178C6" },
+  { icon: Palette, alt: "Tailwind CSS", color: "#06B6D4" },
+  { icon: Terminal, alt: "Node.js", color: "#339933" },
+  { icon: GitBranch, alt: "GraphQL", color: "#E10098" },
+  { icon: Database, alt: "PostgreSQL", color: "#336791" },
+  { icon: Activity, alt: "Kafka", color: "#231F20" },
+  { icon: Cloud, alt: "AWS", color: "#FF9900" },
+  { icon: Container, alt: "Docker", color: "#2496ED" },
+  { icon: Cpu, alt: "Kubernetes", color: "#326CE5" },
+  { icon: HardDrive, alt: "Redis", color: "#DC382D" },
 ]
 
-// Google Material Design tile marquee with elevation instead of borders
+// Google Material Design tile marquee with elevation - using clean Lucide icons
 export function SkillsTileRowSection({ className = "" }: { className?: string }) {
   const row = [...techTiles, ...techTiles] // duplicate for seamless loop
 
@@ -39,26 +53,37 @@ export function SkillsTileRowSection({ className = "" }: { className?: string })
             animation: "marquee 28s linear infinite",
           }}
         >
-          {row.map((t, i) => (
-            <div
-              key={`${t.alt}-${i}`}
-              className="relative h-16 w-16 shrink-0 rounded-3xl transition-all duration-200 hover:scale-105"
-              style={{
-                backgroundColor: "var(--card)",
-                border: "none", // Google Material Design - no borders
-                boxShadow: "0 2px 8px -2px rgba(0, 0, 0, 0.1), 0 1px 4px -1px rgba(0, 0, 0, 0.06)", // Material elevation
-              }}
-              title={t.alt}
-            >
-              <Image
-                src={t.src || "/placeholder.svg"}
-                alt={`${t.alt} logo`}
-                fill
-                sizes="64px"
-                className="p-3 object-contain"
-              />
-            </div>
-          ))}
+          {row.map((t, i) => {
+            const Icon = t.icon
+            return (
+              <div
+                key={`${t.alt}-${i}`}
+                className="group relative h-16 w-16 shrink-0 rounded-3xl transition-all duration-200 hover:scale-110 flex items-center justify-center"
+                style={{
+                  backgroundColor: "var(--card)",
+                  border: "none",
+                  boxShadow: "0 2px 8px -2px rgba(0, 0, 0, 0.1), 0 1px 4px -1px rgba(0, 0, 0, 0.06)",
+                }}
+                title={t.alt}
+              >
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+                  style={{
+                    background: `linear-gradient(135deg, ${t.color}15, ${t.color}25)`,
+                    border: `1px solid ${t.color}20`,
+                  }}
+                >
+                  <Icon
+                    className="w-6 h-6 transition-all duration-300"
+                    style={{
+                      color: t.color,
+                      strokeWidth: 1.5,
+                    }}
+                  />
+                </div>
+              </div>
+            )
+          })}
         </div>
 
         <style jsx>{`
