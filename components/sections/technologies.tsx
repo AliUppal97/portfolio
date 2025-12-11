@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { Button } from "@/components/ui/button"
-import Image from "next/image"
 import { useMemo, useState, useCallback, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { useCustomization } from "@/components/providers/customization-provider"
@@ -27,32 +26,44 @@ import {
   Shield,
   Rocket,
   BarChart3,
+  Layout,
+  FileCode,
+  Terminal,
+  Container,
+  HardDrive,
+  GitBranch,
+  Cpu,
+  Box,
+  Figma,
+  Send,
+  type LucideIcon,
 } from "lucide-react"
 
-// Background-free logos from /public/logos, with a non-placeholder fallback
-const iconSrcMap: Record<string, string> = {
-  React: "/logos/react.png",
-  "Next.js": "/logos/nextjs.png",
-  TypeScript: "/logos/typescript.png",
-  JavaScript: "/logos/javascript.png",
-  "Tailwind CSS": "/logos/tailwind.png",
-  "Node.js": "/logos/node.png",
-  Python: "/logos/python.png",
-  Prisma: "/logos/prisma.png",
-  PostgreSQL: "/logos/postgres.png",
-  MySQL: "/logos/mysql.png",
-  MongoDB: "/logos/mongodb.png",
-  Redis: "/logos/redis.png",
-  AWS: "/logos/aws.png",
-  Docker: "/logos/docker.png",
-  Vercel: "/logos/vercel.png",
-  Git: "/logos/git.png",
-  GitHub: "/logos/github.png",
-  OpenAI: "/logos/openai.png",
-  Figma: "/logos/figma.png",
-  Stripe: "/logos/stripe.png",
+// Clean Lucide icons for all technologies - no backgrounds, crisp SVG
+const techIcons: Record<string, LucideIcon> = {
+  React: Layers,
+  "Next.js": Layout,
+  TypeScript: FileCode,
+  JavaScript: Code2,
+  "Tailwind CSS": Palette,
+  "Node.js": Terminal,
+  Python: Code2,
+  Prisma: Database,
+  PostgreSQL: Database,
+  MySQL: Database,
+  MongoDB: Database,
+  Redis: HardDrive,
+  AWS: Cloud,
+  Docker: Container,
+  Vercel: Cloud,
+  Git: GitBranch,
+  GitHub: GitBranch,
+  OpenAI: Sparkles,
+  Figma: Figma,
+  Stripe: Send,
+  GraphQL: GitBranch,
+  Kubernetes: Cpu,
 }
-const iconFallback = "/images/fallbacks/logo-fallback.png"
 
 const categoryIcons = {
   Frontend: Code2,
@@ -109,21 +120,49 @@ const categoryColors = {
   },
 }
 
-function TechIcon({ name, size = 24 }: { name: string; size?: number }) {
-  const src = iconSrcMap[name] || iconFallback
+// Premium brand colors for each technology
+const techBrandColors: Record<string, { primary: string; secondary: string }> = {
+  React: { primary: "#61DAFB", secondary: "#087EA4" },
+  "Next.js": { primary: "#000000", secondary: "#333333" },
+  TypeScript: { primary: "#3178C6", secondary: "#5B9BD5" },
+  JavaScript: { primary: "#F7DF1E", secondary: "#D4C01B" },
+  "Tailwind CSS": { primary: "#06B6D4", secondary: "#38BDF8" },
+  "Node.js": { primary: "#339933", secondary: "#68BB59" },
+  Python: { primary: "#3776AB", secondary: "#FFD43B" },
+  Prisma: { primary: "#2D3748", secondary: "#4A5568" },
+  PostgreSQL: { primary: "#336791", secondary: "#4A90A4" },
+  MySQL: { primary: "#4479A1", secondary: "#F29111" },
+  MongoDB: { primary: "#47A248", secondary: "#68BB59" },
+  Redis: { primary: "#DC382D", secondary: "#F44336" },
+  AWS: { primary: "#FF9900", secondary: "#232F3E" },
+  Docker: { primary: "#2496ED", secondary: "#0085D1" },
+  Vercel: { primary: "#000000", secondary: "#333333" },
+  Git: { primary: "#F05032", secondary: "#E94E32" },
+  GitHub: { primary: "#238636", secondary: "#2EA043" },
+  OpenAI: { primary: "#10A37F", secondary: "#1A7F5A" },
+  Figma: { primary: "#F24E1E", secondary: "#A259FF" },
+  Stripe: { primary: "#635BFF", secondary: "#8B83FF" },
+  GraphQL: { primary: "#E10098", secondary: "#F48FB1" },
+  Kubernetes: { primary: "#326CE5", secondary: "#5B9BD5" },
+}
+
+function TechIcon({ name, size = 24, color }: { name: string; size?: number; color?: string }) {
+  const Icon = techIcons[name] || Code2
+  const brandColor = techBrandColors[name]?.primary || color || "#6B7280"
   return (
-    <Image
-      src={src || "/placeholder.svg"}
-      alt={`${name} logo`}
-      width={size}
-      height={size}
-      className="object-contain"
-      draggable={false}
+    <Icon
+      className="transition-all duration-300 relative z-10"
+      style={{
+        width: size,
+        height: size,
+        color: brandColor,
+        strokeWidth: 2,
+      }}
     />
   )
 }
 
-function ExperienceIndicator({ years, color }: { years: number; color: string }) {
+function ExperienceIndicator({ years, color, lightBg = false }: { years: number; color: string; lightBg?: boolean }) {
   const dots = Math.min(years, 5)
   const getProficiencyLevel = (years: number) => {
     if (years >= 5) return { label: "Expert", icon: Crown }
@@ -133,24 +172,26 @@ function ExperienceIndicator({ years, color }: { years: number; color: string })
   }
 
   const { label, icon: Icon } = getProficiencyLevel(years)
+  // Use appropriate inactive color based on background
+  const inactiveColor = lightBg ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.2)"
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center gap-0.5">
+      <div className="flex items-center gap-1">
         {Array.from({ length: 5 }).map((_, idx) => (
           <div
             key={idx}
-            className="h-1.5 w-1.5 rounded-full transition-all duration-300"
+            className="h-2 w-2 rounded-full transition-all duration-300"
             style={{
-              backgroundColor: idx < dots ? color : "rgba(255,255,255,0.2)",
-              boxShadow: idx < dots ? `0 0 4px ${color}40` : "none",
+              backgroundColor: idx < dots ? color : inactiveColor,
+              boxShadow: idx < dots ? `0 0 6px ${color}50` : "none",
             }}
           />
         ))}
       </div>
-      <div className="flex items-center gap-1">
-        <Icon className="w-3 h-3" style={{ color }} />
-        <span className="text-xs font-medium" style={{ color }}>
+      <div className="flex items-center gap-1.5">
+        <Icon className="w-3.5 h-3.5" style={{ color, strokeWidth: 2 }} />
+        <span className="text-xs font-semibold" style={{ color }}>
           {label}
         </span>
       </div>
@@ -158,20 +199,28 @@ function ExperienceIndicator({ years, color }: { years: number; color: string })
   )
 }
 
+const defaultColors = {
+  primary: "#6B7280",
+  secondary: "#9CA3AF",
+  gradient: "from-gray-500 to-gray-400",
+  bg: "rgba(107, 114, 128, 0.1)",
+}
+
 function PremiumTechCard({ item, index, inView }: { item: TechnologyItem; index: number; inView: boolean }) {
-  const colors = categoryColors[item.category as keyof typeof categoryColors]
-  const CategoryIcon = categoryIcons[item.category as keyof typeof categoryIcons]
+  const colors = categoryColors[item.category as keyof typeof categoryColors] ?? defaultColors
+  const CategoryIcon = categoryIcons[item.category as keyof typeof categoryIcons] ?? Code2
+  const primaryColor = colors.primary
 
   const handleMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       requestAnimationFrame(() => {
         if (e.currentTarget) {
-          e.currentTarget.style.boxShadow = `0 25px 50px -12px ${colors.primary}30`
+          e.currentTarget.style.boxShadow = `0 25px 50px -12px ${primaryColor}30`
           e.currentTarget.style.transform = "translateY(-4px) scale(1.02)"
         }
       })
     },
-    [colors.primary],
+    [primaryColor],
   )
 
   const handleMouseLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -205,11 +254,11 @@ function PremiumTechCard({ item, index, inView }: { item: TechnologyItem; index:
           aria-label={`${item.name} technology`}
           data-interactive="true"
         >
-          {/* Premium gradient overlay */}
+          {/* Clean gradient overlay - matching Professional Toolkit style */}
           <div
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
             style={{
-              background: `linear-gradient(135deg, ${colors.primary}08, ${colors.secondary}15)`,
+              background: `linear-gradient(160deg, ${colors.primary}05 0%, ${colors.secondary}08 100%)`,
             }}
           />
 
@@ -221,13 +270,14 @@ function PremiumTechCard({ item, index, inView }: { item: TechnologyItem; index:
           </div>
 
           <div className="relative z-10 flex-1 flex flex-col">
-            {/* Tech icon and name */}
+            {/* Tech icon and name - Clean icon container like Professional Toolkit */}
             <div className="flex items-center gap-4 mb-4">
               <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center p-3"
+                className="w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 relative overflow-hidden"
                 style={{
-                  background: `linear-gradient(135deg, ${colors.primary}20, ${colors.secondary}10)`,
-                  border: `1px solid ${colors.primary}30`,
+                  background: `linear-gradient(135deg, ${techBrandColors[item.name]?.primary || colors.primary}12, ${techBrandColors[item.name]?.secondary || colors.secondary}18)`,
+                  border: `1px solid ${techBrandColors[item.name]?.primary || colors.primary}15`,
+                  boxShadow: `0 4px 14px -2px ${techBrandColors[item.name]?.primary || colors.primary}25`,
                 }}
               >
                 <TechIcon name={item.name} size={32} />
@@ -275,11 +325,11 @@ function PremiumTechCard({ item, index, inView }: { item: TechnologyItem; index:
         </div>
       </HoverCardTrigger>
       <HoverCardContent
-        className="z-50 max-w-sm rounded-3xl border-0 p-6"
+        className="z-50 w-80 rounded-3xl border-0 p-5"
         style={{
-          background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)",
+          background: "linear-gradient(160deg, #ffffff 0%, #f8fafc 100%)",
           backdropFilter: "blur(20px)",
-          boxShadow: `0 25px 50px -12px ${colors.primary}20`,
+          boxShadow: `0 25px 50px -12px ${colors.primary}30, 0 0 0 1px rgba(0,0,0,0.06)`,
         }}
         align="center"
         side="top"
@@ -295,60 +345,93 @@ function PremiumTechCard({ item, index, inView }: { item: TechnologyItem; index:
 
 function PremiumTechDetails({ item, colors }: { item: TechnologyItem; colors: any }) {
   const CategoryIcon = categoryIcons[item.category as keyof typeof categoryIcons]
+  const brandColor = techBrandColors[item.name] || { primary: colors.primary, secondary: colors.secondary }
+
+  // High contrast colors for the light popover background
+  const textPrimary = "#0f172a" // slate-900 for maximum contrast
+  const textSecondary = "#475569" // slate-600 for secondary text
+  
+  // Ensure icon color has enough contrast (darken if needed for light colors)
+  const ensureContrast = (color: string) => {
+    // For very light colors like yellow, use the secondary or category color
+    const lightColors = ["#F7DF1E", "#FBBF24", "#FFD43B", "#FCD34D"]
+    if (lightColors.some(c => color.toUpperCase().includes(c.slice(1).toUpperCase()))) {
+      return colors.primary
+    }
+    return color
+  }
+  const iconColor = ensureContrast(brandColor.primary)
 
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center gap-3">
+      {/* Header - Premium icon container with high contrast */}
+      <div className="flex items-center gap-4">
         <div
-          className="w-12 h-12 rounded-2xl flex items-center justify-center"
+          className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
           style={{
-            background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
-            boxShadow: `0 8px 25px -5px ${colors.primary}40`,
+            background: `linear-gradient(135deg, ${brandColor.primary}, ${brandColor.secondary || brandColor.primary})`,
+            boxShadow: `0 6px 20px -4px ${brandColor.primary}50`,
           }}
         >
-          <TechIcon name={item.name} size={24} />
+          <TechIcon name={item.name} size={28} color="#ffffff" />
         </div>
-        <div>
-          <h4 className="font-bold text-lg" style={{ color: "var(--fg)" }}>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-bold text-lg leading-tight" style={{ color: textPrimary }}>
             {item.name}
           </h4>
-          <div className="flex items-center gap-2">
-            <CategoryIcon className="w-4 h-4" style={{ color: colors.primary }} />
-            <span className="text-sm font-medium" style={{ color: colors.primary }}>
+          {/* Category badge with icon container for better contrast */}
+          <div 
+            className="inline-flex items-center gap-1.5 mt-1.5 px-2.5 py-1 rounded-lg"
+            style={{ 
+              backgroundColor: `${colors.primary}12`,
+              border: `1px solid ${colors.primary}20`,
+            }}
+          >
+            <CategoryIcon className="w-3.5 h-3.5" style={{ color: colors.primary, strokeWidth: 2.5 }} />
+            <span className="text-xs font-bold" style={{ color: colors.primary }}>
               {item.category}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Description */}
-      <p className="text-sm leading-relaxed" style={{ color: "var(--fg-secondary)" }}>
+      {/* Description with high contrast */}
+      <p className="text-sm leading-relaxed" style={{ color: textSecondary }}>
         {item.description}
       </p>
 
-      {/* Experience details */}
-      <div className="space-y-3">
+      {/* Experience details with improved layout */}
+      <div className="space-y-3 p-3 rounded-xl" style={{ backgroundColor: "rgba(0,0,0,0.02)" }}>
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium" style={{ color: "var(--fg-secondary)" }}>
+          <span className="text-sm font-medium" style={{ color: textSecondary }}>
             Years of Experience
           </span>
-          <span className="text-lg font-bold" style={{ color: colors.primary }}>
+          <span className="text-lg font-bold" style={{ color: iconColor }}>
             {item.yearsLabel}
           </span>
         </div>
-        <ExperienceIndicator years={item.years} color={colors.primary} />
+        <ExperienceIndicator years={item.years} color={iconColor} lightBg={true} />
       </div>
 
-      {/* Status indicators */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+      {/* Status indicators with icon containers for better contrast */}
+      <div className="flex items-center justify-between pt-3 border-t border-slate-200">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-green-500" />
-          <span className="text-xs font-medium text-green-600">Production Ready</span>
+          <div 
+            className="w-6 h-6 rounded-md flex items-center justify-center"
+            style={{ backgroundColor: "rgba(16, 185, 129, 0.12)" }}
+          >
+            <div className="w-2 h-2 rounded-full bg-emerald-500" style={{ boxShadow: "0 0 6px rgba(16, 185, 129, 0.6)" }} />
+          </div>
+          <span className="text-xs font-bold text-emerald-600">Production Ready</span>
         </div>
         <div className="flex items-center gap-2">
-          <Award className="w-4 h-4" style={{ color: colors.primary }} />
-          <span className="text-xs font-medium" style={{ color: colors.primary }}>
+          <div 
+            className="w-6 h-6 rounded-md flex items-center justify-center"
+            style={{ backgroundColor: `${iconColor}12` }}
+          >
+            <Award className="w-3.5 h-3.5" style={{ color: iconColor, strokeWidth: 2.5 }} />
+          </div>
+          <span className="text-xs font-bold" style={{ color: iconColor }}>
             Enterprise Grade
           </span>
         </div>
@@ -516,13 +599,13 @@ export function TechnologiesSection() {
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative z-10">
                 <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"
                   style={{
                     background: `linear-gradient(135deg, ${stat.color}, ${stat.color}90)`,
-                    boxShadow: `0 8px 25px -5px ${stat.color}40`,
+                    boxShadow: `0 4px 14px -2px ${stat.color}35`,
                   }}
                 >
-                  <stat.icon className="w-6 h-6 text-white" />
+                  <stat.icon className="w-6 h-6 text-white" style={{ strokeWidth: 2.5 }} />
                 </div>
                 <div className="text-3xl font-bold mb-2" style={{ color: stat.color }}>
                   {stat.value}
