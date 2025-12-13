@@ -5,7 +5,8 @@ import type React from "react"
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { Inter, Space_Grotesk, Source_Serif_4 } from "next/font/google"
 
-const inter = Inter({ subsets: ["latin"] })
+// Export default font for use in other components
+export const inter = Inter({ subsets: ["latin"] })
 const grotesk = Space_Grotesk({ subsets: ["latin"] })
 const serif = Source_Serif_4({ subsets: ["latin"] })
 
@@ -47,9 +48,11 @@ export function CustomizationProvider({
   children: React.ReactNode
 }) {
   const [customization, setCustomizationState] = useState<Customization>(defaultCustomization)
+  const [mounted, setMounted] = useState(false)
 
   // Load settings from localStorage
   useEffect(() => {
+    setMounted(true)
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) {
@@ -74,13 +77,15 @@ export function CustomizationProvider({
     })
   }, [])
 
-  // Resolve font classes
-  const fontClass =
-    customization.font === "inter"
-      ? inter.className
+  // Get font family for CSS (always use inter initially to match server)
+  const fontFamily = useMemo(() => {
+    if (!mounted) return inter.style.fontFamily
+    return customization.font === "inter"
+      ? inter.style.fontFamily
       : customization.font === "grotesk"
-        ? grotesk.className
-        : serif.className
+        ? grotesk.style.fontFamily
+        : serif.style.fontFamily
+  }, [mounted, customization.font])
 
   // Google Material Design 3 Color System with premium typography hierarchy
   const presetVars: Record<ThemePreset, React.CSSProperties> = {
@@ -310,8 +315,9 @@ export function CustomizationProvider({
       ...base,
       "--primary": customization.primary,
       "--font-scale": String(customization.fontScale),
+      fontFamily: fontFamily, // Apply font family via CSS
     } as React.CSSProperties
-  }, [customization.primary, customization.theme, customization.fontScale])
+  }, [customization.primary, customization.theme, customization.fontScale, fontFamily])
 
   useEffect(() => {
     // Mirror theme variables to :root for Portals (e.g., Radix sheets)
@@ -337,7 +343,6 @@ export function CustomizationProvider({
       }}
     >
       <div
-        className={fontClass}
         style={{
           ...styleVars,
           color: "var(--text-primary)",
