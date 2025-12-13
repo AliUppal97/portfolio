@@ -149,17 +149,23 @@ export function Navigation() {
               scrollToSection("#home")
             }}
             className="flex items-center gap-3 group relative"
-            style={{ overflow: 'visible' }}
+            style={{ 
+              overflow: 'visible', 
+              transform: 'translateZ(0)',
+              backgroundColor: 'transparent',
+              boxShadow: 'none',
+            }}
           >
-            <div className="relative w-10 h-10 logo-container" style={{ willChange: 'transform', overflow: 'hidden' }}>
+            <div className="relative w-10 h-10 logo-container" style={{ willChange: 'transform', overflow: 'visible' }}>
               {/* Animated gradient background with rotation */}
               <div
                 className="absolute inset-0 rounded-xl flex items-center justify-center transition-all duration-500 logo-bg"
                 style={{
                   background: `linear-gradient(135deg, ${siteConfig.branding.primaryColor} 0%, ${siteConfig.branding.secondaryColor} 50%, ${siteConfig.branding.primaryColor} 100%)`,
                   backgroundSize: '200% 200%',
-                  boxShadow: `0 4px 15px -3px ${siteConfig.branding.primaryColor}66`,
-                  transform: 'scale(1) rotate(0deg)',
+                  boxShadow: 'none',
+                  transform: 'scale(1) rotate(0deg) translateZ(0)',
+                  transformOrigin: 'center center',
                 }}
               >
                 {/* Holographic shimmer overlay */}
@@ -213,7 +219,7 @@ export function Navigation() {
             {/* CSS Animations */}
             <style jsx>{`
               .logo-container {
-                overflow: hidden;
+                overflow: visible;
                 contain: layout style paint;
               }
               
@@ -221,10 +227,23 @@ export function Navigation() {
                 animation: gradientShift 3s ease infinite;
                 will-change: transform;
                 contain: layout style paint;
+                transform-origin: center center;
+              }
+              
+              .group {
+                transform: translateZ(0);
+              }
+              
+              .group:hover {
+                transform: translateZ(0) translateY(0);
+                background-color: transparent !important;
+                box-shadow: none !important;
               }
               
               .group:hover .logo-bg {
-                transform: scale(1.1) rotate(12deg);
+                transform: scale(1.1) rotate(12deg) translateZ(0);
+                transform-origin: center center;
+                box-shadow: none !important;
               }
               
               .logo-shimmer {
@@ -236,15 +255,22 @@ export function Navigation() {
                 animation: iconPulse 2s ease-in-out infinite;
                 will-change: transform, filter;
                 contain: layout style paint;
+                transform-origin: center center;
               }
               
               .group:hover .logo-icon {
-                transform: scale(1.1) rotate(12deg);
+                transform: scale(1.1) rotate(12deg) translateZ(0);
+                transform-origin: center center;
               }
               
               .logo-text {
                 position: relative;
                 display: inline-block;
+                transform: translateZ(0);
+              }
+              
+              .group:hover .logo-text {
+                transform: translateZ(0) translateY(0);
               }
               
               .logo-underline {
@@ -526,7 +552,6 @@ export function Navigation() {
               </Button>
             </SheetTrigger>
             <SheetContent
-              side="right"
               className="w-80 p-0"
               style={{
                 backgroundColor: "hsl(var(--surface))",
