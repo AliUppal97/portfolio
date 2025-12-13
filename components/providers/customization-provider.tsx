@@ -5,8 +5,7 @@ import type React from "react"
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { Inter, Space_Grotesk, Source_Serif_4 } from "next/font/google"
 
-// Export default font for use in other components
-export const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] })
 const grotesk = Space_Grotesk({ subsets: ["latin"] })
 const serif = Source_Serif_4({ subsets: ["latin"] })
 
@@ -77,15 +76,14 @@ export function CustomizationProvider({
     })
   }, [])
 
-  // Get font family for CSS (always use inter initially to match server)
-  const fontFamily = useMemo(() => {
-    if (!mounted) return inter.style.fontFamily
-    return customization.font === "inter"
-      ? inter.style.fontFamily
+  // Resolve font classes - always use inter initially to match server render, then switch after mount
+  const fontClass = mounted
+    ? customization.font === "inter"
+      ? inter.className
       : customization.font === "grotesk"
-        ? grotesk.style.fontFamily
-        : serif.style.fontFamily
-  }, [mounted, customization.font])
+        ? grotesk.className
+        : serif.className
+    : inter.className // Always use inter initially to prevent hydration mismatch
 
   // Google Material Design 3 Color System with premium typography hierarchy
   const presetVars: Record<ThemePreset, React.CSSProperties> = {
@@ -315,9 +313,8 @@ export function CustomizationProvider({
       ...base,
       "--primary": customization.primary,
       "--font-scale": String(customization.fontScale),
-      fontFamily: fontFamily, // Apply font family via CSS
     } as React.CSSProperties
-  }, [customization.primary, customization.theme, customization.fontScale, fontFamily])
+  }, [customization.primary, customization.theme, customization.fontScale])
 
   useEffect(() => {
     // Mirror theme variables to :root for Portals (e.g., Radix sheets)
@@ -343,6 +340,7 @@ export function CustomizationProvider({
       }}
     >
       <div
+        className={fontClass}
         style={{
           ...styleVars,
           color: "var(--text-primary)",
