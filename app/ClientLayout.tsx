@@ -5,7 +5,9 @@ import "./globals.css"
 import { ThemeProvider } from "next-themes"
 import { suppressResizeObserverErrors } from "@/lib/utils"
 import { useEffect } from "react"
-import { inter } from "@/components/providers/customization-provider"
+import { Inter } from "next/font/google"
+
+const inter = Inter({ subsets: ["latin"] })
 
 // Component to handle ResizeObserver error suppression
 function ErrorSuppressor() {
@@ -24,7 +26,7 @@ export default function ClientLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
         <ErrorSuppressor />
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange suppressColorSchemeWarning>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
       </body>
