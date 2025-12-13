@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { Palette, Settings2 } from "lucide-react"
+import { Palette } from "lucide-react"
 
 // Live Customization Panel with Google Material Design colors
 export function CustomizerPanel() {
@@ -41,34 +41,9 @@ export function CustomizerPanel() {
   )
 
   return (
-    <>
-      {/* Desktop floating trigger */}
-      <div className="fixed right-6 top-6 z-50 hidden md:block">
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full bg-transparent"
-              style={{
-                backgroundColor: "var(--card)",
-                border: "none",
-                boxShadow: "var(--shadow-3)",
-              }}
-              aria-label="Open Customizer"
-            >
-              <Settings2 className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetBody presets={presets} customization={customization} setCustomization={setCustomization} />
-        </Sheet>
-      </div>
-
-      {/* Invisible Sheet host for mobile */}
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetBody presets={presets} customization={customization} setCustomization={setCustomization} />
-      </Sheet>
-    </>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetBody presets={presets} customization={customization} setCustomization={setCustomization} />
+    </Sheet>
   )
 }
 
