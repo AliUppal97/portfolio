@@ -148,23 +148,172 @@ export function Navigation() {
               e.preventDefault()
               scrollToSection("#home")
             }}
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-3 group relative"
+            style={{ overflow: 'visible' }}
           >
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-              style={{
-                background: `linear-gradient(135deg, ${siteConfig.branding.primaryColor} 0%, ${siteConfig.branding.secondaryColor} 100%)`,
-                boxShadow: `0 4px 15px -3px ${siteConfig.branding.primaryColor}66`,
+            <div className="relative w-10 h-10 logo-container" style={{ willChange: 'transform', overflow: 'hidden' }}>
+              {/* Animated gradient background with rotation */}
+              <div
+                className="absolute inset-0 rounded-xl flex items-center justify-center transition-all duration-500 logo-bg"
+                style={{
+                  background: `linear-gradient(135deg, ${siteConfig.branding.primaryColor} 0%, ${siteConfig.branding.secondaryColor} 50%, ${siteConfig.branding.primaryColor} 100%)`,
+                  backgroundSize: '200% 200%',
+                  boxShadow: `0 4px 15px -3px ${siteConfig.branding.primaryColor}66`,
+                  transform: 'scale(1) rotate(0deg)',
+                }}
+              >
+                {/* Holographic shimmer overlay */}
+                <div
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 logo-shimmer"
+                  style={{
+                    background: `linear-gradient(
+                      135deg,
+                      transparent 0%,
+                      rgba(255, 255, 255, 0.3) 25%,
+                      transparent 50%,
+                      rgba(255, 255, 255, 0.2) 75%,
+                      transparent 100%
+                    )`,
+                    backgroundSize: '200% 200%',
+                    mixBlendMode: 'overlay',
+                  }}
+                />
+                
+                
+                {/* Icon with animated glow */}
+                <Zap 
+                  className="w-5 h-5 text-white relative z-10 transition-all duration-500 logo-icon" 
+                  style={{
+                    filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.6))',
+                    transform: 'scale(1) rotate(0deg)',
+                  }}
+                />
+              </div>
+            </div>
+            
+            <span 
+              className="font-bold text-lg hidden sm:block transition-all duration-300 relative logo-text inline-block"
+              style={{ 
+                color: "hsl(var(--text-primary))",
+                letterSpacing: 'normal',
               }}
             >
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <span 
-              className="font-bold text-lg hidden sm:block"
-              style={{ color: "hsl(var(--text-primary))" }}
-            >
               {siteConfig.branding.logoText}
+              {/* Elegant gradient underline on hover */}
+              <span
+                className="absolute -bottom-0.5 left-0 h-0.5 bg-gradient-to-r transition-all duration-500 opacity-0 group-hover:opacity-100 logo-underline"
+                style={{
+                  width: '0%',
+                  background: `linear-gradient(90deg, ${siteConfig.branding.primaryColor}, ${siteConfig.branding.secondaryColor})`,
+                  transform: '',
+                }}
+              />
             </span>
+            
+            {/* CSS Animations */}
+            <style jsx>{`
+              .logo-container {
+                overflow: hidden;
+                contain: layout style paint;
+              }
+              
+              .logo-bg {
+                animation: gradientShift 3s ease infinite;
+                will-change: transform;
+                contain: layout style paint;
+              }
+              
+              .group:hover .logo-bg {
+                transform: scale(1.1) rotate(12deg);
+              }
+              
+              .logo-shimmer {
+                animation: shimmer 2s linear infinite;
+                contain: layout style paint;
+              }
+              
+              .logo-icon {
+                animation: iconPulse 2s ease-in-out infinite;
+                will-change: transform, filter;
+                contain: layout style paint;
+              }
+              
+              .group:hover .logo-icon {
+                transform: scale(1.1) rotate(12deg);
+              }
+              
+              .logo-text {
+                position: relative;
+                display: inline-block;
+              }
+              
+              .logo-underline {
+                transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+                contain: layout style paint;
+              }
+              
+              .group:hover .logo-underline {
+                width: 100%;
+              }
+              
+              @keyframes gradientShift {
+                0% {
+                  background-position: 0% 50%;
+                }
+                25% {
+                  background-position: 100% 25%;
+                }
+                50% {
+                  background-position: 100% 50%;
+                }
+                75% {
+                  background-position: 0% 75%;
+                }
+                100% {
+                  background-position: 0% 50%;
+                }
+              }
+              
+              @keyframes shimmer {
+                0% {
+                  background-position: -200% -200%;
+                }
+                50% {
+                  background-position: 200% 200%;
+                }
+                100% {
+                  background-position: -200% -200%;
+                }
+              }
+              
+              @keyframes iconPulse {
+                0% {
+                  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5)) brightness(1);
+                  transform: scale(1);
+                }
+                20% {
+                  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) brightness(1.1);
+                  transform: scale(1.05);
+                }
+                40% {
+                  filter: drop-shadow(0 0 9px rgba(255, 255, 255, 0.9)) brightness(1.2);
+                  transform: scale(1.1);
+                }
+                60% {
+                  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) brightness(1.1);
+                  transform: scale(1.05);
+                }
+                80% {
+                  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)) brightness(1.05);
+                  transform: scale(1.02);
+                }
+                100% {
+                  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5)) brightness(1);
+                  transform: scale(1);
+                }
+              }
+              
+            `}</style>
           </a>
 
           {/* Desktop Navigation */}
