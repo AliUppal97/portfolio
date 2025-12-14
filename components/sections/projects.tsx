@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import Image from "next/image"
 import { projects } from "@/lib/data"
 import { Button } from "@/components/ui/button"
@@ -29,6 +29,12 @@ export function ProjectsSection() {
   const { customization } = useCustomization()
   const [filter, setFilter] = useState<string>("All")
   const [active, setActive] = useState<Project | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch by only applying customization after mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const categories = useMemo(() => ["All", ...Array.from(new Set(projects.flatMap((p) => p.tags)))], [])
   const filtered = useMemo(
@@ -114,7 +120,8 @@ export function ProjectsSection() {
         <div
           className={cn(
             "grid gap-8 max-w-7xl mx-auto",
-            customization.layout === "grid" ? "md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1 max-w-4xl",
+            // Use default layout until mounted to prevent hydration mismatch
+            mounted && customization.layout === "stacked" ? "grid-cols-1 max-w-4xl" : "md:grid-cols-2 lg:grid-cols-3",
           )}
         >
           {filtered.map((p, index) => {
