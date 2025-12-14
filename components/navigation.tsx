@@ -149,69 +149,45 @@ export function Navigation() {
               scrollToSection("#home")
             }}
             className="flex items-center gap-3 group relative"
-            style={{ 
-              overflow: 'visible', 
-              transform: 'translateZ(0)',
-              backgroundColor: 'transparent',
-              boxShadow: 'none',
-            }}
           >
-            <div className="relative w-10 h-10 logo-container" style={{ willChange: 'transform', overflow: 'visible' }}>
-              {/* Animated gradient background with rotation */}
+            <div className="relative w-10 h-10 logo-container">
+              {/* Gradient background - clean, no shadow */}
               <div
-                className="absolute inset-0 rounded-xl flex items-center justify-center transition-all duration-500 logo-bg"
+                className="absolute inset-0 rounded-xl flex items-center justify-center transition-all duration-300 logo-bg"
                 style={{
-                  background: `linear-gradient(135deg, ${siteConfig.branding.primaryColor} 0%, ${siteConfig.branding.secondaryColor} 50%, ${siteConfig.branding.primaryColor} 100%)`,
-                  backgroundSize: '200% 200%',
-                  boxShadow: 'none',
-                  transform: 'scale(1) rotate(0deg) translateZ(0)',
-                  transformOrigin: 'center center',
+                  background: `linear-gradient(135deg, ${siteConfig.branding.primaryColor} 0%, ${siteConfig.branding.secondaryColor} 100%)`,
+                  boxShadow: 'none', // Explicitly no shadow
                 }}
               >
-                {/* Holographic shimmer overlay */}
+                {/* Subtle brightness overlay on hover */}
                 <div
-                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 logo-shimmer"
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{
-                    background: `linear-gradient(
-                      135deg,
-                      transparent 0%,
-                      rgba(255, 255, 255, 0.3) 25%,
-                      transparent 50%,
-                      rgba(255, 255, 255, 0.2) 75%,
-                      transparent 100%
-                    )`,
-                    backgroundSize: '200% 200%',
+                    background: 'rgba(255, 255, 255, 0.15)',
                     mixBlendMode: 'overlay',
                   }}
                 />
                 
-                
-                {/* Icon with animated glow */}
+                {/* Icon - gentle scale on hover */}
                 <Zap 
-                  className="w-5 h-5 text-white relative z-10 transition-all duration-500 logo-icon" 
-                  style={{
-                    filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.6))',
-                    transform: 'scale(1) rotate(0deg)',
-                  }}
+                  className="w-5 h-5 text-white relative z-10 transition-transform duration-300 logo-icon" 
                 />
               </div>
             </div>
             
             <span 
-              className="font-bold text-lg hidden sm:block transition-all duration-300 relative logo-text inline-block"
+              className="font-bold text-lg hidden sm:block transition-colors duration-300 relative"
               style={{ 
                 color: "hsl(var(--text-primary))",
-                letterSpacing: 'normal',
               }}
             >
               {siteConfig.branding.logoText}
-              {/* Elegant gradient underline on hover */}
+              {/* Subtle underline on hover */}
               <span
-                className="absolute -bottom-0.5 left-0 h-0.5 bg-gradient-to-r transition-all duration-500 opacity-0 group-hover:opacity-100 logo-underline"
+                className="absolute -bottom-0.5 left-0 h-0.5 transition-all duration-300 logo-underline"
                 style={{
                   width: '0%',
                   background: `linear-gradient(90deg, ${siteConfig.branding.primaryColor}, ${siteConfig.branding.secondaryColor})`,
-                  transform: '',
                 }}
               />
             </span>
@@ -219,126 +195,34 @@ export function Navigation() {
             {/* CSS Animations */}
             <style jsx>{`
               .logo-container {
-                overflow: visible;
-                contain: layout style paint;
+                overflow: hidden;
               }
               
               .logo-bg {
-                animation: gradientShift 3s ease infinite;
-                will-change: transform;
-                contain: layout style paint;
-                transform-origin: center center;
-              }
-              
-              .group {
-                transform: translateZ(0);
-              }
-              
-              .group:hover {
-                transform: translateZ(0) translateY(0);
-                background-color: transparent !important;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
                 box-shadow: none !important;
               }
               
               .group:hover .logo-bg {
-                transform: scale(1.1) rotate(12deg) translateZ(0);
-                transform-origin: center center;
+                transform: scale(1.05);
                 box-shadow: none !important;
               }
               
-              .logo-shimmer {
-                animation: shimmer 2s linear infinite;
-                contain: layout style paint;
-              }
-              
               .logo-icon {
-                animation: iconPulse 2s ease-in-out infinite;
-                will-change: transform, filter;
-                contain: layout style paint;
-                transform-origin: center center;
+                transition: transform 0.3s ease;
               }
               
               .group:hover .logo-icon {
-                transform: scale(1.1) rotate(12deg) translateZ(0);
-                transform-origin: center center;
-              }
-              
-              .logo-text {
-                position: relative;
-                display: inline-block;
-                transform: translateZ(0);
-              }
-              
-              .group:hover .logo-text {
-                transform: translateZ(0) translateY(0);
+                transform: scale(1.1);
               }
               
               .logo-underline {
-                transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-                contain: layout style paint;
+                transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
               }
               
               .group:hover .logo-underline {
                 width: 100%;
               }
-              
-              @keyframes gradientShift {
-                0% {
-                  background-position: 0% 50%;
-                }
-                25% {
-                  background-position: 100% 25%;
-                }
-                50% {
-                  background-position: 100% 50%;
-                }
-                75% {
-                  background-position: 0% 75%;
-                }
-                100% {
-                  background-position: 0% 50%;
-                }
-              }
-              
-              @keyframes shimmer {
-                0% {
-                  background-position: -200% -200%;
-                }
-                50% {
-                  background-position: 200% 200%;
-                }
-                100% {
-                  background-position: -200% -200%;
-                }
-              }
-              
-              @keyframes iconPulse {
-                0% {
-                  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5)) brightness(1);
-                  transform: scale(1);
-                }
-                20% {
-                  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) brightness(1.1);
-                  transform: scale(1.05);
-                }
-                40% {
-                  filter: drop-shadow(0 0 9px rgba(255, 255, 255, 0.9)) brightness(1.2);
-                  transform: scale(1.1);
-                }
-                60% {
-                  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) brightness(1.1);
-                  transform: scale(1.05);
-                }
-                80% {
-                  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)) brightness(1.05);
-                  transform: scale(1.02);
-                }
-                100% {
-                  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5)) brightness(1);
-                  transform: scale(1);
-                }
-              }
-              
             `}</style>
           </a>
 
@@ -552,6 +436,7 @@ export function Navigation() {
               </Button>
             </SheetTrigger>
             <SheetContent
+              side="right"
               className="w-80 p-0"
               style={{
                 backgroundColor: "hsl(var(--surface))",
