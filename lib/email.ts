@@ -21,8 +21,10 @@ export async function sendEmailWithResend(payload: EmailPayload): Promise<EmailR
   const TO_EMAIL = process.env.CONTACT_EMAIL || 'hello@example.com'
   
   if (!RESEND_API_KEY) {
-    console.warn('RESEND_API_KEY not configured, falling back to console log')
-    console.log('Contact form submission:', payload)
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('RESEND_API_KEY not configured, falling back to console log')
+      console.log('Contact form submission:', payload)
+    }
     return { success: true }
   }
 
@@ -51,7 +53,9 @@ export async function sendEmailWithResend(payload: EmailPayload): Promise<EmailR
     const data = await response.json()
     return { success: true, messageId: data.id }
   } catch (error) {
-    console.error('Email sending failed:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Email sending failed:', error)
+    }
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Unknown error' 
@@ -183,7 +187,9 @@ export async function sendAutoReply(payload: EmailPayload): Promise<EmailRespons
     const data = await response.json()
     return { success: true, messageId: data.id }
   } catch (error) {
-    console.error('Auto-reply failed:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Auto-reply failed:', error)
+    }
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
@@ -240,6 +246,8 @@ Best regards,
 Senior Software Engineer
   `.trim()
 }
+
+
 
 
 

@@ -74,7 +74,9 @@ export async function POST(req: Request) {
     })
 
     if (!emailResult.success) {
-      console.error("Failed to send notification email:", emailResult.error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Failed to send notification email:", emailResult.error)
+      }
       // Still return success to user - we don't want to expose email issues
     }
 
@@ -88,18 +90,22 @@ export async function POST(req: Request) {
     })
 
     if (!autoReplyResult.success) {
-      console.error("Failed to send auto-reply:", autoReplyResult.error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Failed to send auto-reply:", autoReplyResult.error)
+      }
     }
 
-    // Log successful submission
-    console.log("Contact form submission:", {
-      name,
-      email,
-      company,
-      website,
-      messageLength: message.length,
-      timestamp: new Date().toISOString(),
-    })
+    // Log successful submission (only in development)
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Contact form submission:", {
+        name,
+        email,
+        company,
+        website,
+        messageLength: message.length,
+        timestamp: new Date().toISOString(),
+      })
+    }
 
     return NextResponse.json({ 
       ok: true,
@@ -107,7 +113,9 @@ export async function POST(req: Request) {
     }, { status: 200 })
 
   } catch (error) {
-    console.error("Contact form error:", error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Contact form error:", error)
+    }
     return NextResponse.json(
       { ok: false, error: "An unexpected error occurred. Please try again." },
       { status: 500 }
