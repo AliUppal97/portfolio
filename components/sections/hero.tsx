@@ -102,7 +102,7 @@ export function HeroSection() {
               style={{
                 background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                 boxShadow: "0 20px 40px -10px rgba(102, 126, 234, 0.4)",
-                color: "hsl(var(--text-inverse))",
+                color: "white",
               }}
             >
               <a href="#projects" className="flex items-center gap-2">
@@ -222,7 +222,7 @@ export function HeroSection() {
                   background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%)",
                   backdropFilter: "blur(20px)",
                   boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)",
-                  color: "hsl(var(--text-inverse))",
+                  color: "white",
                 }}
                 aria-label="Play introduction video"
               >
