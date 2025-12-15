@@ -83,11 +83,11 @@ export function Navigation() {
       // Update header style
       setIsScrolled(window.scrollY > 50)
 
-      // Update active section
-      const sections = navItems.map(item => item.id)
+      // Update active section - check both nav items and dropdown items
+      const allSections = [...navItems.map(item => item.id), ...dropdownItems.map(item => item.id)]
       let current = "home"
 
-      for (const sectionId of sections) {
+      for (const sectionId of allSections) {
         const element = document.getElementById(sectionId)
         if (element) {
           const rect = element.getBoundingClientRect()
@@ -207,9 +207,7 @@ export function Navigation() {
                   )}
                   data-no-hover="true"
                   style={{
-                    backgroundColor: isActive 
-                      ? "hsl(var(--primary) / 0.1)" 
-                      : "transparent",
+                    backgroundColor: "transparent",
                     color: isActive 
                       ? "hsl(var(--primary))" 
                       : "hsl(var(--text-secondary))",
@@ -257,21 +255,43 @@ export function Navigation() {
                   {/* Subtle scale effect using pseudo-element (doesn't affect layout) */}
                   <div className="absolute inset-0 rounded-xl nav-item-scale pointer-events-none" />
                   
+                  {/* Active state background highlight */}
+                  {isActive && (
+                    <>
+                      <div
+                        className="absolute inset-0 rounded-xl nav-item-active-bg pointer-events-none"
+                        style={{
+                          background: `linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.08) 100%)`,
+                          backdropFilter: 'blur(8px)',
+                        }}
+                      />
+                      <div
+                        className="absolute inset-0 rounded-xl nav-item-active-glow pointer-events-none"
+                        style={{
+                          background: `radial-gradient(circle at center, hsl(var(--primary) / 0.2) 0%, transparent 70%)`,
+                          filter: 'blur(8px)',
+                        }}
+                      />
+                    </>
+                  )}
+                  
                   {/* Icon with rotation and scale */}
                   <item.icon className="w-4 h-4 relative z-10 transition-all duration-500 nav-item-icon" />
                   
                   {/* Text with slide effect */}
                   <span className="relative z-10 transition-all duration-500 nav-item-text">{item.label}</span>
                   
-                  {/* Active indicator */}
+                  {/* Premium active indicator - animated bottom bar */}
                   {isActive && (
-                    <div
-                      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full nav-item-indicator"
-                      style={{
-                        background: `linear-gradient(135deg, ${siteConfig.branding.primaryColor}, ${siteConfig.branding.secondaryColor})`,
-                        boxShadow: `0 0 8px ${siteConfig.branding.primaryColor}80`,
-                      }}
-                    />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full nav-item-indicator overflow-hidden">
+                      <div
+                        className="absolute inset-0 nav-item-indicator-bar"
+                        style={{
+                          background: `linear-gradient(90deg, ${siteConfig.branding.primaryColor} 0%, ${siteConfig.branding.secondaryColor} 100%)`,
+                          boxShadow: `0 0 12px ${siteConfig.branding.primaryColor}80, 0 0 24px ${siteConfig.branding.primaryColor}40`,
+                        }}
+                      />
+                    </div>
                   )}
                 </button>
               )
@@ -280,48 +300,86 @@ export function Navigation() {
 
             {/* Premium More dropdown */}
             <div className="relative group nav-more">
-              <button
-                className="nav-item relative px-3 py-2 rounded-xl text-sm font-medium transition-all duration-500 flex items-center gap-2 overflow-hidden nav-more-button"
-                data-no-hover="true"
-                style={{ 
-                  color: "var(--fg-secondary)",
-                  backgroundColor: "transparent",
-                  // Reserve space for border to prevent layout shift
-                  border: '1px solid transparent',
-                  transform: 'none',
-                  boxShadow: 'none',
-                }}
-              >
-                {/* Premium animated background */}
-                <div
-                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 nav-more-bg"
-                  style={{
-                    background: `linear-gradient(135deg, hsl(var(--primary) / 0.2) 0%, hsl(var(--primary) / 0.08) 50%, hsl(var(--primary) / 0.05) 100%)`,
-                    backdropFilter: 'blur(12px)',
-                  }}
-                />
-                
-                {/* Enhanced glow effect */}
-                <div
-                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 nav-more-glow"
-                  style={{
-                    background: `radial-gradient(circle at center, hsl(var(--primary) / 0.3) 0%, hsl(var(--primary) / 0.15) 40%, transparent 70%)`,
-                    filter: 'blur(14px)',
-                  }}
-                />
-                
-                {/* Shine sweep effect */}
-                <div
-                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 nav-more-shine pointer-events-none"
-                  style={{
-                    background: `linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%)`,
-                    backgroundSize: '200% 200%',
-                  }}
-                />
-                
-                <span className="relative z-10 transition-all duration-500 group-hover:text-[hsl(var(--primary))] nav-more-text">More</span>
-                <ChevronDown className="w-4 h-4 relative z-10 transition-all duration-500 group-hover:rotate-180 group-hover:text-[hsl(var(--primary))] nav-more-icon" style={{ width: '1rem', height: '1rem', flexShrink: 0 }} />
-              </button>
+              {(() => {
+                const isMoreActive = dropdownItems.some(item => activeSection === item.id)
+                return (
+                  <button
+                    className="nav-item relative px-3 py-2 rounded-xl text-sm font-medium transition-all duration-500 flex items-center gap-2 overflow-hidden nav-more-button"
+                    data-no-hover="true"
+                    style={{ 
+                      color: isMoreActive ? "hsl(var(--primary))" : "var(--fg-secondary)",
+                      backgroundColor: "transparent",
+                      // Reserve space for border to prevent layout shift
+                      border: '1px solid transparent',
+                      transform: 'none',
+                      boxShadow: 'none',
+                    }}
+                  >
+                    {/* Premium animated background */}
+                    <div
+                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 nav-more-bg"
+                      style={{
+                        background: `linear-gradient(135deg, hsl(var(--primary) / 0.2) 0%, hsl(var(--primary) / 0.08) 50%, hsl(var(--primary) / 0.05) 100%)`,
+                        backdropFilter: 'blur(12px)',
+                      }}
+                    />
+                    
+                    {/* Enhanced glow effect */}
+                    <div
+                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 nav-more-glow"
+                      style={{
+                        background: `radial-gradient(circle at center, hsl(var(--primary) / 0.3) 0%, hsl(var(--primary) / 0.15) 40%, transparent 70%)`,
+                        filter: 'blur(14px)',
+                      }}
+                    />
+                    
+                    {/* Shine sweep effect */}
+                    <div
+                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 nav-more-shine pointer-events-none"
+                      style={{
+                        background: `linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%)`,
+                        backgroundSize: '200% 200%',
+                      }}
+                    />
+                    
+                    {/* Active state background highlight */}
+                    {isMoreActive && (
+                      <>
+                        <div
+                          className="absolute inset-0 rounded-xl nav-item-active-bg pointer-events-none"
+                          style={{
+                            background: `linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.08) 100%)`,
+                            backdropFilter: 'blur(8px)',
+                          }}
+                        />
+                        <div
+                          className="absolute inset-0 rounded-xl nav-item-active-glow pointer-events-none"
+                          style={{
+                            background: `radial-gradient(circle at center, hsl(var(--primary) / 0.2) 0%, transparent 70%)`,
+                            filter: 'blur(8px)',
+                          }}
+                        />
+                      </>
+                    )}
+                    
+                    <span className="relative z-10 transition-all duration-500 group-hover:text-[hsl(var(--primary))] nav-more-text">More</span>
+                    <ChevronDown className="w-4 h-4 relative z-10 transition-all duration-500 group-hover:rotate-180 group-hover:text-[hsl(var(--primary))] nav-more-icon" style={{ width: '1rem', height: '1rem', flexShrink: 0 }} />
+                    
+                    {/* Premium active indicator - animated bottom bar */}
+                    {isMoreActive && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full nav-item-indicator overflow-hidden">
+                        <div
+                          className="absolute inset-0 nav-item-indicator-bar"
+                          style={{
+                            background: `linear-gradient(90deg, ${siteConfig.branding.primaryColor} 0%, ${siteConfig.branding.secondaryColor} 100%)`,
+                            boxShadow: `0 0 12px ${siteConfig.branding.primaryColor}80, 0 0 24px ${siteConfig.branding.primaryColor}40`,
+                          }}
+                        />
+                      </div>
+                    )}
+                  </button>
+                )
+              })()}
               
               {/* Premium Dropdown Panel - Following Project Standards */}
               <div 
@@ -828,19 +886,57 @@ export function Navigation() {
           letter-spacing: 0;
         }
         
-        .nav-item-indicator {
-          animation: pulse 2s ease-in-out infinite;
+        /* Active state background effects */
+        .nav-item-active-bg {
+          opacity: 1;
+          transition: opacity 0.3s ease;
         }
         
-        @keyframes pulse {
+        .nav-item-active-glow {
+          opacity: 1;
+          animation: activeGlowPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes activeGlowPulse {
           0%, 100% {
-            opacity: 1;
-            transform: translateX(-50%);
+            opacity: 0.6;
           }
           50% {
-            opacity: 0.7;
-            transform: translateX(-50%);
+            opacity: 1;
           }
+        }
+        
+        /* Premium active indicator bar */
+        .nav-item-indicator {
+          height: 2px;
+          opacity: 1;
+          transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-item-indicator-bar {
+          width: 100%;
+          height: 100%;
+          animation: indicatorShimmer 2s ease-in-out infinite;
+        }
+        
+        @keyframes indicatorShimmer {
+          0%, 100% {
+            opacity: 1;
+            transform: scaleX(1);
+          }
+          50% {
+            opacity: 0.8;
+            transform: scaleX(0.95);
+          }
+        }
+        
+        /* Enhanced active state styling - applied via inline styles, but ensure consistency */
+        .nav-item .nav-item-icon {
+          transition: color 0.3s ease, filter 0.3s ease;
+        }
+        
+        .nav-item .nav-item-text {
+          transition: color 0.3s ease, text-shadow 0.3s ease;
         }
         
         .nav-more-button {
