@@ -148,83 +148,50 @@ export function Navigation() {
               e.preventDefault()
               scrollToSection("#home")
             }}
-            className="flex items-center gap-3 group relative"
+            className="flex items-center gap-3 group logo-link"
+            data-no-hover="true"
+            style={{
+              textDecoration: 'none',
+              transform: 'translateY(0) !important',
+              transition: 'opacity 200ms ease',
+              boxShadow: 'none !important',
+              willChange: 'opacity',
+            }}
           >
-            <div className="relative w-10 h-10 logo-container">
-              {/* Gradient background - clean, no shadow */}
-              <div
-                className="absolute inset-0 rounded-xl flex items-center justify-center transition-all duration-300 logo-bg"
-                style={{
-                  background: `linear-gradient(135deg, ${siteConfig.branding.primaryColor} 0%, ${siteConfig.branding.secondaryColor} 100%)`,
-                  boxShadow: 'none', // Explicitly no shadow
-                }}
-              >
-                {/* Subtle brightness overlay on hover */}
-                <div
-                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.15)',
-                    mixBlendMode: 'overlay',
-                  }}
-                />
-                
-                {/* Icon - gentle scale on hover */}
-                <Zap 
-                  className="w-5 h-5 text-white relative z-10 transition-transform duration-300 logo-icon" 
-                />
-              </div>
+            {/* Rounded square icon with gradient background - animated */}
+            <div 
+              className="w-10 h-10 rounded-xl flex items-center justify-center logo-icon-container relative overflow-visible"
+              style={{
+                background: `linear-gradient(135deg, ${siteConfig.branding.primaryColor} 0%, ${siteConfig.branding.secondaryColor} 100%)`,
+                boxShadow: 'none',
+              }}
+            >
+              {/* Animated glow effect on hover */}
+              <div className="logo-icon-glow absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* Shine effect */}
+              <div className="logo-icon-shine absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* White lightning bolt icon */}
+              <Zap 
+                className="w-5 h-5 text-white logo-icon-zap relative z-10" 
+                strokeWidth={2.5}
+              />
             </div>
             
+            {/* Logo text */}
             <span 
-              className="font-bold text-lg hidden sm:block transition-colors duration-300 relative"
+              className="font-bold text-lg hidden sm:block logo-text"
               style={{ 
                 color: "hsl(var(--text-primary))",
+                transform: 'none',
+                transition: 'none',
               }}
             >
               {siteConfig.branding.logoText}
-              {/* Subtle underline on hover */}
-              <span
-                className="absolute -bottom-0.5 left-0 h-0.5 transition-all duration-300 logo-underline"
-                style={{
-                  width: '0%',
-                  background: `linear-gradient(90deg, ${siteConfig.branding.primaryColor}, ${siteConfig.branding.secondaryColor})`,
-                }}
-              />
             </span>
-            
-            {/* CSS Animations */}
-            <style jsx>{`
-              .logo-container {
-                overflow: hidden;
-              }
-              
-              .logo-bg {
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-                box-shadow: none !important;
-              }
-              
-              .group:hover .logo-bg {
-                transform: scale(1.05);
-                box-shadow: none !important;
-              }
-              
-              .logo-icon {
-                transition: transform 0.3s ease;
-              }
-              
-              .group:hover .logo-icon {
-                transform: scale(1.1);
-              }
-              
-              .logo-underline {
-                transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-              }
-              
-              .group:hover .logo-underline {
-                width: 100%;
-              }
-            `}</style>
           </a>
+          
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
@@ -235,8 +202,8 @@ export function Navigation() {
                   key={item.id}
                   onClick={() => scrollToSection(item.href)}
                   className={cn(
-                    "px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300",
-                    "hover:scale-105 flex items-center gap-2"
+                    "nav-item relative px-3 py-2 rounded-xl text-sm font-medium transition-all duration-500",
+                    "flex items-center gap-2 group/item overflow-hidden"
                   )}
                   style={{
                     backgroundColor: isActive 
@@ -245,33 +212,88 @@ export function Navigation() {
                     color: isActive 
                       ? "hsl(var(--primary))" 
                       : "hsl(var(--text-secondary))",
+                    // Reserve space for border to prevent layout shift
+                    border: '1px solid transparent',
                   }}
-                  data-no-hover="true"
                 >
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.label}</span>
+                  {/* Animated background gradient on hover */}
+                  <div
+                    className="absolute inset-0 rounded-xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-500 nav-item-bg"
+                    style={{
+                      background: `linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.05) 100%)`,
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  />
+                  
+                  {/* Glow effect on hover */}
+                  <div
+                    className="absolute inset-0 rounded-xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-500 nav-item-glow"
+                    style={{
+                      background: `radial-gradient(circle at center, hsl(var(--primary) / 0.2) 0%, transparent 70%)`,
+                      filter: 'blur(12px)',
+                    }}
+                  />
+                  
+                  {/* Animated border on hover - using inset shadow to prevent layout shift */}
+                  <div
+                    className="absolute inset-0 rounded-xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-500 nav-item-border pointer-events-none"
+                    style={{
+                      boxShadow: `inset 0 0 0 1px hsl(var(--primary) / 0.3), 0 0 20px hsl(var(--primary) / 0.2), inset 0 0 20px hsl(var(--primary) / 0.1)`,
+                    }}
+                  />
+                  
+                  {/* Icon with rotation and scale */}
+                  <item.icon className="w-4 h-4 relative z-10 transition-all duration-500 nav-item-icon" />
+                  
+                  {/* Text with slide effect */}
+                  <span className="relative z-10 transition-all duration-500 nav-item-text">{item.label}</span>
+                  
+                  {/* Active indicator */}
+                  {isActive && (
+                    <div
+                      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full nav-item-indicator"
+                      style={{
+                        background: `linear-gradient(135deg, ${siteConfig.branding.primaryColor}, ${siteConfig.branding.secondaryColor})`,
+                        boxShadow: `0 0 8px ${siteConfig.branding.primaryColor}80`,
+                      }}
+                    />
+                  )}
                 </button>
               )
             })}
+            
 
             {/* Premium More dropdown */}
-            <div className="relative group">
+            <div className="relative group nav-more">
               <button
-                className="px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 flex items-center gap-2"
+                className="nav-item relative px-3 py-2 rounded-xl text-sm font-medium transition-all duration-500 flex items-center gap-2 overflow-hidden"
                 style={{ 
                   color: "var(--fg-secondary)",
                   backgroundColor: "transparent",
+                  // Reserve space for border to prevent layout shift
+                  border: '1px solid transparent',
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--surface-variant)"
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent"
-                }}
-                data-no-hover="true"
               >
-                <span>More</span>
-                <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+                {/* Animated background */}
+                <div
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background: `linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.05) 100%)`,
+                    backdropFilter: 'blur(10px)',
+                  }}
+                />
+                
+                {/* Glow effect */}
+                <div
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background: `radial-gradient(circle at center, hsl(var(--primary) / 0.2) 0%, transparent 70%)`,
+                    filter: 'blur(12px)',
+                  }}
+                />
+                
+                <span className="relative z-10 transition-all duration-500 group-hover:text-[hsl(var(--primary))] group-hover:font-semibold">More</span>
+                <ChevronDown className="w-4 h-4 relative z-10 transition-all duration-500 group-hover:rotate-180 group-hover:text-[hsl(var(--primary))]" style={{ width: '1rem', height: '1rem', flexShrink: 0 }} />
               </button>
               
               {/* Premium Dropdown Panel - Following Project Standards */}
@@ -321,8 +343,7 @@ export function Navigation() {
                         onClick={() => scrollToSection(item.href)}
                         className={cn(
                           "w-full px-3 py-3 rounded-xl text-left transition-all duration-300",
-                          "flex items-center gap-3 group/item relative overflow-hidden",
-                          "hover:translate-x-1"
+                          "flex items-center gap-3 group/item relative overflow-hidden"
                         )}
                         style={{
                           backgroundColor: isActive 
@@ -409,15 +430,34 @@ export function Navigation() {
           <div className="hidden md:flex items-center gap-3">
             <Button
               onClick={() => scrollToSection("#contact")}
-              className="rounded-full px-6 py-2 font-semibold transition-all duration-300 hover:scale-105"
+              className="nav-cta relative rounded-full px-6 py-2 font-semibold transition-all duration-500 overflow-hidden group/cta"
               style={{
                 background: `linear-gradient(135deg, ${siteConfig.branding.primaryColor} 0%, ${siteConfig.branding.secondaryColor} 100%)`,
                 color: "white",
                 boxShadow: `0 10px 25px -5px ${siteConfig.branding.primaryColor}66`,
               }}
             >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Let's Talk
+              {/* Animated shine effect */}
+              <div
+                className="absolute inset-0 opacity-0 group-hover/cta:opacity-100 transition-opacity duration-500 cta-shine"
+                style={{
+                  background: `linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%)`,
+                  backgroundSize: '200% 200%',
+                }}
+              />
+              
+              {/* Enhanced glow on hover */}
+              <div
+                className="absolute inset-0 rounded-full opacity-0 group-hover/cta:opacity-100 transition-opacity duration-500"
+                style={{
+                  background: `radial-gradient(circle, ${siteConfig.branding.primaryColor}80 0%, transparent 70%)`,
+                  filter: 'blur(20px)',
+                  transform: 'scale(1.5)',
+                }}
+              />
+              
+              <MessageSquare className="w-4 h-4 mr-2 relative z-10 transition-all duration-500 group-hover/cta:rotate-12" style={{ width: '1rem', height: '1rem', flexShrink: 0 }} />
+              <span className="relative z-10 transition-all duration-500">Let's Talk</span>
             </Button>
           </div>
 
@@ -436,7 +476,6 @@ export function Navigation() {
               </Button>
             </SheetTrigger>
             <SheetContent
-              side="right"
               className="w-80 p-0"
               style={{
                 backgroundColor: "hsl(var(--surface))",
@@ -521,6 +560,167 @@ export function Navigation() {
           </Sheet>
         </div>
       </nav>
+      
+      {/* Consolidated styles - all navigation styles in one block */}
+      <style jsx>{`
+        .logo-link {
+          position: relative;
+          display: inline-flex;
+        }
+        
+        .logo-link:hover {
+          transform: translateY(0) !important;
+          box-shadow: none !important;
+          filter: none !important;
+          scale: 1 !important;
+        }
+        
+        .logo-link:active {
+          transform: translateY(0) !important;
+          box-shadow: none !important;
+          scale: 1 !important;
+        }
+        
+        .logo-icon-container {
+          position: relative;
+          transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+          will-change: transform;
+          /* Ensure transforms don't affect parent layout */
+          transform-origin: center;
+        }
+        
+        .logo-link:hover .logo-icon-container {
+          transform: scale(1.08) rotate(8deg);
+        }
+        
+        .logo-icon-glow {
+          background: radial-gradient(circle, ${siteConfig.branding.primaryColor}70 0%, transparent 70%);
+          filter: blur(10px);
+          transform: scale(1.3);
+          pointer-events: none;
+          transition: opacity 0.4s ease;
+        }
+        
+        .logo-icon-shine {
+          background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+          background-size: 200% 200%;
+          pointer-events: none;
+          transition: opacity 0.4s ease;
+        }
+        
+        .logo-link:hover .logo-icon-shine {
+          animation: logoShine 2s linear infinite;
+        }
+        
+        .logo-icon-zap {
+          transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.4s ease;
+          filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0));
+          transform-origin: center;
+          will-change: transform, filter;
+        }
+        
+        .logo-link:hover .logo-icon-zap {
+          transform: scale(1.15) rotate(-8deg);
+          filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 20px ${siteConfig.branding.primaryColor}80);
+        }
+        
+        @keyframes logoShine {
+          0% {
+            background-position: -200% -200%;
+          }
+          100% {
+            background-position: 200% 200%;
+          }
+        }
+        
+        .logo-text {
+          position: relative;
+        }
+        
+        .logo-text:hover {
+          transform: none !important;
+        }
+        
+        .nav-item {
+          position: relative;
+        }
+        
+        .nav-item:hover {
+          /* Only opacity/color changes, no size/position changes */
+          transform: none;
+          /* Border color change only, size already reserved */
+          border-color: hsl(var(--primary) / 0.3);
+        }
+        
+        .nav-item-icon {
+          transform: translateX(0) rotate(0deg);
+          /* Fixed size to prevent layout shift */
+          width: 1rem;
+          height: 1rem;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .nav-item:hover .nav-item-icon {
+          /* Minimal transform that doesn't affect layout */
+          transform: rotate(5deg);
+          color: hsl(var(--primary));
+          filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.5));
+        }
+        
+        .nav-item-text {
+          transform: translateX(0);
+          /* Reserve space for font-weight change */
+          font-weight: 500;
+          display: inline-block;
+        }
+        
+        .nav-item:hover .nav-item-text {
+          /* Only color change, no position/weight change */
+          transform: none;
+          color: hsl(var(--primary));
+          font-weight: 600;
+        }
+        
+        .nav-item-indicator {
+          animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+            transform: translateX(-50%);
+          }
+          50% {
+            opacity: 0.7;
+            transform: translateX(-50%);
+          }
+        }
+        
+        .nav-cta {
+          position: relative;
+        }
+        
+        .nav-cta:hover {
+          /* Only shadow change, no transform to prevent layout shift */
+          transform: none;
+          box-shadow: 0 15px 35px -5px ${siteConfig.branding.primaryColor}99, 0 0 30px ${siteConfig.branding.primaryColor}40 !important;
+        }
+        
+        .cta-shine {
+          animation: shine 2s linear infinite;
+        }
+        
+        @keyframes shine {
+          0% {
+            background-position: -200% -200%;
+          }
+          100% {
+            background-position: 200% 200%;
+          }
+        }
+      `}</style>
     </header>
   )
 }
