@@ -617,7 +617,7 @@ export function Navigation() {
         }
         
         .logo-link:hover .logo-icon-container {
-          transform: scale(1.08) rotate(8deg);
+          transform: scale(1.08);
         }
         
         .logo-icon-glow {
@@ -647,7 +647,7 @@ export function Navigation() {
         }
         
         .logo-link:hover .logo-icon-zap {
-          transform: scale(1.15) rotate(-8deg);
+          transform: scale(1.15);
           filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 20px ${siteConfig.branding.primaryColor}80);
         }
         
