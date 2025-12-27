@@ -2,12 +2,13 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Github, Linkedin, Download, Mail, Phone, MapPin, Calendar, Sparkles, Send, Award } from "lucide-react"
+import { useTheme } from "next-themes"
 import { useCustomization } from "@/components/providers/customization-provider"
 import { cn } from "@/lib/utils"
 import { 
@@ -20,10 +21,19 @@ import {
 
 export function ContactSection() {
   const { customization } = useCustomization()
+  const { resolvedTheme } = useTheme()
   const [loading, setLoading] = useState(false)
   const [ok, setOk] = useState<boolean | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+  
+  // Determine if we're in dark mode (only after mount to avoid hydration mismatch)
+  const isDark = mounted && resolvedTheme === "dark"
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -95,21 +105,26 @@ export function ContactSection() {
       icon: Linkedin,
       label: "LinkedIn",
       href: siteConfig.social.linkedin,
-      color: "#0077B5",
+      // Premium LinkedIn colors: vibrant blue with white icon for both themes
+      color: "#FFFFFF", // White icon for premium contrast
+      bgColor: isDark ? "#0077B5" : "#0077B5", // Same vibrant blue for both themes
       description: "Professional network",
     }] : []),
     ...(hasSocialLink("github") ? [{
       icon: Github,
       label: "GitHub",
       href: siteConfig.social.github,
-      color: "#333333",
+      // Premium GitHub colors: dark background with white icon for both themes
+      color: "#FFFFFF", // White icon for premium contrast
+      bgColor: isDark ? "#24292E" : "#24292E", // GitHub's official dark color for both themes
       description: "Code repositories",
     }] : []),
     ...(hasSocialLink("calendly") ? [{
       icon: Calendar,
       label: "Schedule Call",
       href: siteConfig.social.calendly,
-      color: "#006BFF",
+      color: "#FFFFFF", // White icon for premium contrast
+      bgColor: isDark ? "#006BFF" : "#006BFF", // Vibrant blue for both themes
       description: "Book a meeting",
     }] : []),
   ]
@@ -197,10 +212,9 @@ export function ContactSection() {
                       name="name"
                       required
                       placeholder="John Doe"
-                      className="rounded-xl border-0 bg-white/10 backdrop-blur-md text-base py-3 premium-input"
+                      className="rounded-xl bg-white/10 backdrop-blur-md text-base py-3 premium-input focus-visible:ring-0 focus-visible:ring-offset-0"
                       style={{
                         backgroundColor: "hsl(var(--surface-variant))",
-                        border: "1px solid hsl(var(--border))",
                         color: "hsl(var(--text-primary))",
                       }}
                     />
@@ -215,10 +229,9 @@ export function ContactSection() {
                       name="email"
                       required
                       placeholder="john@company.com"
-                      className="rounded-xl border-0 bg-white/10 backdrop-blur-md text-base py-3 premium-input"
+                      className="rounded-xl bg-white/10 backdrop-blur-md text-base py-3 premium-input focus-visible:ring-0 focus-visible:ring-offset-0"
                       style={{
                         backgroundColor: "hsl(var(--surface-variant))",
-                        border: "1px solid hsl(var(--border))",
                         color: "hsl(var(--text-primary))",
                       }}
                     />
@@ -234,10 +247,9 @@ export function ContactSection() {
                       id="company"
                       name="company"
                       placeholder="Your Company"
-                      className="rounded-xl border-0 bg-white/10 backdrop-blur-md text-base py-3 premium-input"
+                      className="rounded-xl bg-white/10 backdrop-blur-md text-base py-3 premium-input focus-visible:ring-0 focus-visible:ring-offset-0"
                       style={{
                         backgroundColor: "hsl(var(--surface-variant))",
-                        border: "1px solid hsl(var(--border))",
                         color: "hsl(var(--text-primary))",
                       }}
                     />
@@ -251,10 +263,9 @@ export function ContactSection() {
                       name="website"
                       type="url"
                       placeholder="https://yourcompany.com"
-                      className="rounded-xl border-0 bg-white/10 backdrop-blur-md text-base py-3 premium-input"
+                      className="rounded-xl bg-white/10 backdrop-blur-md text-base py-3 premium-input focus-visible:ring-0 focus-visible:ring-offset-0"
                       style={{
                         backgroundColor: "hsl(var(--surface-variant))",
-                        border: "1px solid hsl(var(--border))",
                         color: "hsl(var(--text-primary))",
                       }}
                     />
@@ -271,10 +282,9 @@ export function ContactSection() {
                     required
                     rows={6}
                     placeholder="Tell me about your project, goals, timeline, and any specific requirements..."
-                    className="rounded-xl border-0 bg-white/10 backdrop-blur-md text-base resize-none premium-input"
+                    className="rounded-xl bg-white/10 backdrop-blur-md text-base resize-none premium-input focus-visible:ring-0 focus-visible:ring-offset-0"
                     style={{
                       backgroundColor: "hsl(var(--surface-variant))",
-                      border: "1px solid hsl(var(--border))",
                       color: "hsl(var(--text-primary))",
                     }}
                   />
@@ -353,10 +363,7 @@ export function ContactSection() {
                     }}
                   >
                     <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                      style={{
-                        background: `linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.9))`,
-                      }}
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br ${method.color} shadow-lg`}
                     >
                       <method.icon className="w-6 h-6 text-white" />
                     </div>
@@ -402,10 +409,13 @@ export function ContactSection() {
                     data-interactive="true"
                   >
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ backgroundColor: link.color + "20" }}
+                      className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
+                      style={{ 
+                        backgroundColor: link.bgColor || link.color + "20",
+                        boxShadow: `0 4px 12px -2px ${link.bgColor || link.color}40`,
+                      }}
                     >
-                      <link.icon className="w-5 h-5" style={{ color: link.color }} />
+                      <link.icon className="w-5 h-5 transition-all duration-300" style={{ color: link.color }} />
                     </div>
                     <div>
                       <div className="font-bold text-sm text-text-primary">{link.label}</div>
