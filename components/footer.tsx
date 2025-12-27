@@ -1,6 +1,8 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Github, Linkedin, Mail, Heart, ArrowUp, Twitter, Youtube, MapPin, Zap } from "lucide-react"
+import { useTheme } from "next-themes"
 import { useCustomization } from "@/components/providers/customization-provider"
 import { 
   siteConfig, 
@@ -22,30 +24,72 @@ const iconMap = {
   email: Mail,
 } as const
 
-// Get social links from config
-const socialLinksData = getSocialLinksForDisplay()
-const socialLinks = [
-  ...socialLinksData.map(link => ({
-    name: link.name,
-    icon: iconMap[link.platform as keyof typeof iconMap] || Mail,
-    href: link.href,
-    color: link.color,
-    hoverColor: link.hoverColor,
-  })),
-  { 
-    name: "Email", 
-    icon: Mail, 
-    href: getEmailLink(), 
-    color: "#EA4335",
-    hoverColor: "#c5221f"
-  },
-]
+// Helper function to get premium theme-aware colors and backgrounds
+function getThemeAwareSocialColors(platform: string, isDark: boolean) {
+  const colorMap: Record<string, { iconColor: string; bgColor: string }> = {
+    github: { 
+      iconColor: "#FFFFFF", 
+      bgColor: "#24292E" // GitHub's official dark color for premium look
+    },
+    linkedin: { 
+      iconColor: "#FFFFFF", 
+      bgColor: "#0077B5" // LinkedIn's vibrant blue for premium look
+    },
+    twitter: { 
+      iconColor: "#FFFFFF", 
+      bgColor: "#1DA1F2" 
+    },
+    youtube: { 
+      iconColor: "#FFFFFF", 
+      bgColor: "#FF0000" 
+    },
+    email: { 
+      iconColor: "#FFFFFF", 
+      bgColor: "#EA4335" 
+    },
+  }
+  
+  return colorMap[platform] || colorMap.github
+}
 
 const quickLinks = getQuickLinks()
 const resourceLinks = getResourceLinks()
 
 export function Footer() {
   const { customization } = useCustomization()
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+  
+  // Determine if we're in dark mode (only after mount to avoid hydration mismatch)
+  const isDark = mounted && resolvedTheme === "dark"
+  
+  // Get social links from config with premium theme-aware colors
+  const socialLinksData = getSocialLinksForDisplay()
+  const socialLinks = [
+    ...socialLinksData.map(link => {
+      const colors = getThemeAwareSocialColors(link.platform, isDark)
+      return {
+        name: link.name,
+        icon: iconMap[link.platform as keyof typeof iconMap] || Mail,
+        href: link.href,
+        iconColor: colors.iconColor,
+        bgColor: colors.bgColor,
+        hoverColor: link.hoverColor,
+      }
+    }),
+    { 
+      name: "Email", 
+      icon: Mail, 
+      href: getEmailLink(), 
+      iconColor: getThemeAwareSocialColors("email", isDark).iconColor,
+      bgColor: getThemeAwareSocialColors("email", isDark).bgColor,
+      hoverColor: "#c5221f"
+    },
+  ]
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
@@ -211,14 +255,15 @@ export function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group"
                   style={{
-                    backgroundColor: "hsl(var(--surface-variant))",
-                    color: social.color,
+                    backgroundColor: social.bgColor,
+                    color: social.iconColor,
+                    boxShadow: `0 4px 12px -2px ${social.bgColor}40`,
                   }}
                   aria-label={social.name}
                 >
-                  <social.icon className="w-5 h-5" />
+                  <social.icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
                 </a>
               ))}
             </div>
