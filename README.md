@@ -281,9 +281,14 @@ The portfolio is built with a mobile-first approach:
 ## 📦 Deployment
 
 ### Vercel (Recommended)
+
+For detailed step-by-step deployment instructions, see **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)**.
+
+**Quick Steps:**
 1. Push your code to GitHub
 2. Connect your repository to Vercel
-3. Deploy automatically on every push
+3. Add environment variables (RESEND_API_KEY, CONTACT_EMAIL)
+4. Deploy automatically on every push
 
 ### Other Platforms
 The portfolio works on any platform that supports Next.js:
