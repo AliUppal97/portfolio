@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   keywords: [...siteConfig.seo.keywords],
   authors: [{ name: siteConfig.personal.name }],
   creator: siteConfig.personal.name,
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
