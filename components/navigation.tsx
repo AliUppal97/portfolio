@@ -80,8 +80,13 @@ export function Navigation() {
   // Handle scroll to update active section and header style
   useEffect(() => {
     const handleScroll = () => {
-      // Update header style
-      setIsScrolled(window.scrollY > 50)
+      // Update header style - transparent at top, solid when scrolled
+      const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0
+      const scrolled = scrollY > 10
+      setIsScrolled(scrolled)
+
+      // Set CSS variable for main element to use
+      document.documentElement.style.setProperty('--navbar-scrolled', scrolled ? '1' : '0')
 
       // Update active section - check both nav items and dropdown items
       const allSections = [...navItems.map(item => item.id), ...dropdownItems.map(item => item.id)]
@@ -101,8 +106,15 @@ export function Navigation() {
       setActiveSection(current)
     }
 
+    // Check initial scroll position immediately (synchronously)
+    handleScroll()
+    
+    // Also check after a frame to catch any late scroll position changes
+    requestAnimationFrame(() => {
+      handleScroll()
+    })
+    
     window.addEventListener("scroll", handleScroll, { passive: true })
-    handleScroll() // Initial call
 
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
@@ -128,16 +140,20 @@ export function Navigation() {
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         isScrolled 
           ? "backdrop-blur-xl shadow-lg" 
-          : "backdrop-blur-sm"
+          : "backdrop-blur-none shadow-none"
       )}
       style={{
-        backgroundColor: isScrolled 
-          ? "hsl(var(--surface) / 0.95)" 
-          : "hsl(var(--surface) / 0.7)",
-        borderBottom: isScrolled 
-          ? "1px solid hsl(var(--border) / 0.3)" 
-          : "none",
-      }}
+        ...(isScrolled 
+          ? {
+              backgroundColor: "hsl(var(--surface) / 0.95)",
+              borderBottom: "1px solid hsl(var(--border) / 0.3)",
+            }
+          : {
+              backgroundColor: "transparent",
+              background: "none",
+              borderBottom: "none",
+            }),
+      } as React.CSSProperties}
     >
       <nav className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
