@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Github, Linkedin, Play, ArrowRight, Sparkles, Award, TrendingUp } from "lucide-react"
+import { useTheme } from "next-themes"
 import { useCustomization } from "@/components/providers/customization-provider"
 import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
@@ -11,12 +12,24 @@ import { VideoModal } from "@/components/ui/video-modal"
 
 export function HeroSection() {
   const { customization } = useCustomization()
+  const { resolvedTheme } = useTheme()
   const [isVisible, setIsVisible] = useState(false)
   const [isVideoOpen, setIsVideoOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setIsVisible(true)
+    setMounted(true)
   }, [])
+  
+  // Determine if we're in dark mode (only after mount to avoid hydration mismatch)
+  const isDark = mounted && resolvedTheme === "dark"
+  
+  // Premium icon colors - consistent across themes for premium look
+  const githubIconColor = "#FFFFFF"
+  const linkedinIconColor = "#FFFFFF"
+  const githubBgColor = "#24292E" // GitHub's official dark color
+  const linkedinBgColor = "#0077B5" // LinkedIn's vibrant blue
 
   return (
     <section
@@ -136,12 +149,11 @@ export function HeroSection() {
                   href={siteConfig.social.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300 hover:scale-110"
+                  className="group flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300 hover:scale-110 hover:shadow-lg"
                   style={{
-                    backgroundColor: "hsl(var(--surface) / 0.1)",
-                    backdropFilter: "blur(20px)",
-                    border: "1px solid hsl(var(--border) / 0.2)",
-                    color: "hsl(var(--text-primary))",
+                    backgroundColor: githubBgColor,
+                    color: githubIconColor,
+                    boxShadow: `0 4px 12px -2px ${githubBgColor}40`,
                   }}
                   data-interactive="true"
                 >
@@ -154,12 +166,11 @@ export function HeroSection() {
                   href={siteConfig.social.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300 hover:scale-110"
+                  className="group flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300 hover:scale-110 hover:shadow-lg"
                   style={{
-                    backgroundColor: "hsl(var(--surface) / 0.1)",
-                    backdropFilter: "blur(20px)",
-                    border: "1px solid hsl(var(--border) / 0.2)",
-                    color: "hsl(var(--text-primary))",
+                    backgroundColor: linkedinBgColor,
+                    color: linkedinIconColor,
+                    boxShadow: `0 4px 12px -2px ${linkedinBgColor}40`,
                   }}
                   data-interactive="true"
                 >
