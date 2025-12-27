@@ -16,11 +16,13 @@ import { CustomizationProvider } from "@/components/providers/customization-prov
 import { CustomizerPanel } from "@/components/customizer-panel"
 import { CustomCursor } from "@/components/custom-cursor"
 import { FloatingCTA } from "@/components/floating-cta"
+import { ChatAssistant } from "@/components/chat-assistant"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { ScrollToTop } from "@/components/scroll-to-top"
 import { SectionErrorBoundary } from "@/components/error-boundary"
 import { HeroSkeleton, GridSkeleton, ProjectCardSkeleton, StatsSkeleton } from "@/components/ui/skeleton-loader"
+import { MainWrapper } from "@/components/main-wrapper"
 
 export const metadata: Metadata = {
   title: "Senior Software Engineer Portfolio",
@@ -52,7 +54,7 @@ export default function HomePage() {
     <CustomizationProvider>
       <CustomCursor />
       <Navigation />
-      <main className="scroll-smooth pt-20" style={{ backgroundColor: "var(--bg)" }}>
+      <MainWrapper>
         <JsonLd />
         <div
           className="min-h-screen"
@@ -116,9 +118,10 @@ export default function HomePage() {
           <Footer />
           <CustomizerPanel />
           <FloatingCTA />
+          <ChatAssistant />
           <ScrollToTop />
         </div>
-      </main>
+      </MainWrapper>
     </CustomizationProvider>
   )
 }
