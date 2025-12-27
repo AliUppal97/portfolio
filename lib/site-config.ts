@@ -28,7 +28,7 @@ export const siteConfig = {
   // CONTACT INFORMATION
   // ============================================
   contact: {
-    email: "aliuppal97@gmail.com",
+    email: "aliuppal9797@gmail.com",
     phone: "+92 323 4218194",
     phoneRaw: "+92 323 4218194", // For tel: links
   },
