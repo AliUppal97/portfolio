@@ -22,6 +22,8 @@ export function ContactSection() {
   const { customization } = useCustomization()
   const [loading, setLoading] = useState(false)
   const [ok, setOk] = useState<boolean | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -29,16 +31,36 @@ export function ContactSection() {
     const payload = Object.fromEntries(fd.entries())
     setLoading(true)
     setOk(null)
+    setErrorMessage(null)
+    setSuccessMessage(null)
+    
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       })
-      setOk(res.ok)
-      ;(e.target as HTMLFormElement).reset()
-    } catch {
+      
+      const data = await res.json()
+      
+      if (res.ok && data.ok) {
+        setOk(true)
+        setSuccessMessage(data.message || "Thank you! Your message has been sent successfully.")
+        // Clear form on success
+        ;(e.target as HTMLFormElement).reset()
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
+      } else {
+        setOk(false)
+        setErrorMessage(data.error || "Failed to send your message. Please try again.")
+      }
+    } catch (error) {
       setOk(false)
+      setErrorMessage("Network error. Please check your connection and try again.")
+      console.error("Contact form submission error:", error)
     } finally {
       setLoading(false)
     }
@@ -283,15 +305,15 @@ export function ContactSection() {
                     )}
                   </Button>
 
-                  {ok === true && (
-                    <div className="flex items-center gap-2 text-text-success font-medium">
+                  {successMessage && (
+                    <div className="flex items-center gap-2 text-text-success font-medium animate-in fade-in slide-in-from-top-2 duration-300">
                       <Award className="w-5 h-5" />
-                      <span>Message sent successfully!</span>
+                      <span>{successMessage}</span>
                     </div>
                   )}
-                  {ok === false && (
-                    <div className="flex items-center gap-2 text-text-error font-medium">
-                      <span>Something went wrong. Please try again.</span>
+                  {errorMessage && (
+                    <div className="flex items-center gap-2 text-text-error font-medium animate-in fade-in slide-in-from-top-2 duration-300">
+                      <span className="text-sm">{errorMessage}</span>
                     </div>
                   )}
                 </div>

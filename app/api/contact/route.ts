@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { sendEmailWithResend, sendAutoReply } from "@/lib/email"
+import { extractClientMetadata } from "@/lib/client-metadata"
 import { z } from "zod"
 
 // Validation schema using Zod
@@ -64,6 +65,9 @@ export async function POST(req: Request) {
     // Note: Honeypot validation is handled by Zod schema (max(0) rejects non-empty values)
     // If we reach here, the honeypot check already passed during schema validation
 
+    // Extract client metadata (non-sensitive, publicly available information)
+    const clientMetadata = await extractClientMetadata(req)
+
     // Send email notification
     const emailResult = await sendEmailWithResend({
       name,
@@ -71,16 +75,33 @@ export async function POST(req: Request) {
       message,
       company: company || undefined,
       website: website || undefined,
+      metadata: clientMetadata,
     })
 
+    // Check if main email was sent successfully
     if (!emailResult.success) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error("Failed to send notification email:", emailResult.error)
-      }
-      // Still return success to user - we don't want to expose email issues
+      const errorMessage = emailResult.error || "Failed to send email notification"
+      
+      // Log error in all environments for monitoring
+      console.error("Failed to send notification email:", {
+        error: errorMessage,
+        email,
+        name,
+        timestamp: new Date().toISOString(),
+      })
+      
+      // Return error response so user knows email wasn't sent
+      return NextResponse.json(
+        { 
+          ok: false, 
+          error: "Failed to send your message. Please try again or contact us directly.",
+          details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+        },
+        { status: 500 }
+      )
     }
 
-    // Send auto-reply to the sender
+    // Send auto-reply to the sender (non-critical, don't fail if this fails)
     const autoReplyResult = await sendAutoReply({
       name,
       email,
@@ -90,26 +111,38 @@ export async function POST(req: Request) {
     })
 
     if (!autoReplyResult.success) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error("Failed to send auto-reply:", autoReplyResult.error)
-      }
-    }
-
-    // Log successful submission (only in development)
-    if (process.env.NODE_ENV === 'development') {
-      console.log("Contact form submission:", {
-        name,
+      // Log auto-reply failure but don't fail the request
+      console.warn("Failed to send auto-reply:", {
+        error: autoReplyResult.error,
         email,
-        company,
-        website,
-        messageLength: message.length,
         timestamp: new Date().toISOString(),
       })
     }
 
+    // Log successful submission
+    console.log("Contact form submission successful:", {
+      name,
+      email,
+      company,
+      website,
+      messageLength: message.length,
+      notificationEmailId: emailResult.messageId,
+      autoReplyEmailId: autoReplyResult.messageId,
+      timestamp: new Date().toISOString(),
+      clientInfo: {
+        location: clientMetadata.location,
+        device: clientMetadata.device?.type,
+        browser: clientMetadata.browser?.name,
+        os: clientMetadata.os?.name,
+      },
+    })
+
     return NextResponse.json({ 
       ok: true,
-      message: "Thank you! Your message has been sent successfully."
+      message: "Thank you! Your message has been sent successfully.",
+      emailSent: true,
+      messageId: emailResult.messageId,
+      autoReplySent: autoReplyResult.success,
     }, { status: 200 })
 
   } catch (error) {
@@ -123,10 +156,35 @@ export async function POST(req: Request) {
   }
 }
 
-// Health check endpoint
+// Health check and diagnostic endpoint
 export async function GET() {
-  return NextResponse.json({ 
+  const RESEND_API_KEY = process.env.RESEND_API_KEY
+  const CONTACT_EMAIL = process.env.CONTACT_EMAIL
+  
+  const diagnostics = {
     status: "ok",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    email: {
+      configured: {
+        hasApiKey: !!RESEND_API_KEY,
+        hasContactEmail: !!CONTACT_EMAIL && CONTACT_EMAIL !== 'hello@example.com',
+        contactEmail: CONTACT_EMAIL || 'Not configured',
+        apiKeyPrefix: RESEND_API_KEY ? RESEND_API_KEY.substring(0, 7) + '...' : 'Not configured',
+      },
+      issues: [] as string[],
+    },
+  }
+
+  // Check for configuration issues
+  if (!RESEND_API_KEY) {
+    diagnostics.email.issues.push('RESEND_API_KEY environment variable is missing')
+  }
+  
+  if (!CONTACT_EMAIL || CONTACT_EMAIL === 'hello@example.com') {
+    diagnostics.email.issues.push('CONTACT_EMAIL environment variable is missing or using default value')
+  }
+
+  return NextResponse.json(diagnostics, { 
+    status: diagnostics.email.issues.length > 0 ? 200 : 200 // Still return 200, but with issues
   })
 }

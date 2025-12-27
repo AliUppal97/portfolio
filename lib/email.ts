@@ -1,12 +1,40 @@
 // Email Service Integration with Resend
 // Install: pnpm add resend
 
+interface ClientMetadata {
+  ip: string
+  userAgent: string
+  browser?: {
+    name: string
+    version: string
+  }
+  os?: {
+    name: string
+    version: string
+  }
+  device?: {
+    type: string
+    vendor?: string
+    model?: string
+  }
+  location?: {
+    country?: string
+    region?: string
+    city?: string
+    timezone?: string
+  }
+  referer?: string
+  timestamp: string
+  language?: string
+}
+
 interface EmailPayload {
   name: string
   email: string
   message: string
   company?: string
   website?: string
+  metadata?: ClientMetadata
 }
 
 interface EmailResponse {
@@ -21,44 +49,103 @@ export async function sendEmailWithResend(payload: EmailPayload): Promise<EmailR
   const TO_EMAIL = process.env.CONTACT_EMAIL || 'hello@example.com'
   
   if (!RESEND_API_KEY) {
+    const errorMsg = 'RESEND_API_KEY environment variable is not configured'
+    console.error('Email configuration error:', {
+      error: errorMsg,
+      hasApiKey: false,
+      contactEmail: TO_EMAIL,
+      environment: process.env.NODE_ENV,
+    })
+    
+    // In development, log the submission for testing
     if (process.env.NODE_ENV === 'development') {
-      console.warn('RESEND_API_KEY not configured, falling back to console log')
-      console.log('Contact form submission:', payload)
+      console.warn('⚠️  RESEND_API_KEY not configured - emails will not be sent')
+      console.log('📧 Contact form submission (logged only):', {
+        to: TO_EMAIL,
+        from: payload.email,
+        name: payload.name,
+        message: payload.message.substring(0, 100) + '...',
+      })
     }
-    return { success: true }
+    
+    return { 
+      success: false, 
+      error: errorMsg 
+    }
+  }
+
+  // Validate email addresses
+  if (!TO_EMAIL || TO_EMAIL === 'hello@example.com') {
+    const errorMsg = 'CONTACT_EMAIL environment variable is not configured or is using default value'
+    console.error('Email configuration error:', {
+      error: errorMsg,
+      contactEmail: TO_EMAIL,
+    })
+    return { 
+      success: false, 
+      error: errorMsg 
+    }
   }
 
   try {
+    const emailPayload = {
+      from: 'Portfolio Contact <onboarding@resend.dev>',
+      to: [TO_EMAIL],
+      subject: `New Contact: ${payload.name} - ${payload.company || 'Personal'}`,
+      html: generateEmailHTML(payload),
+      text: generateEmailText(payload),
+      reply_to: payload.email,
+    }
+
+    console.log('Attempting to send email via Resend:', {
+      to: TO_EMAIL,
+      from: emailPayload.from,
+      subject: emailPayload.subject,
+      hasApiKey: !!RESEND_API_KEY,
+      apiKeyPrefix: RESEND_API_KEY.substring(0, 7) + '...',
+    })
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${RESEND_API_KEY}`,
       },
-      body: JSON.stringify({
-        from: 'Portfolio Contact <onboarding@resend.dev>',
-        to: [TO_EMAIL],
-        subject: `New Contact: ${payload.name} - ${payload.company || 'Personal'}`,
-        html: generateEmailHTML(payload),
-        text: generateEmailText(payload),
-        reply_to: payload.email,
-      }),
+      body: JSON.stringify(emailPayload),
     })
 
+    const responseData = await response.json()
+
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || 'Failed to send email')
+      const errorMessage = responseData.message || responseData.error?.message || 'Failed to send email'
+      console.error('Resend API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: responseData,
+        message: errorMessage,
+      })
+      throw new Error(errorMessage)
     }
 
-    const data = await response.json()
-    return { success: true, messageId: data.id }
+    console.log('✅ Email sent successfully:', {
+      messageId: responseData.id,
+      to: TO_EMAIL,
+      timestamp: new Date().toISOString(),
+    })
+
+    return { success: true, messageId: responseData.id }
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Email sending failed:', error)
-    }
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+    console.error('❌ Email sending failed:', {
+      error: errorMessage,
+      errorType: error instanceof Error ? error.constructor.name : typeof error,
+      to: TO_EMAIL,
+      timestamp: new Date().toISOString(),
+    })
+    
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+      error: errorMessage 
     }
   }
 }
@@ -124,6 +211,71 @@ function generateEmailHTML(payload: EmailPayload): string {
                 ${payload.message}
               </div>
             </div>
+            
+            ${payload.metadata ? `
+            <div style="margin-top: 24px; padding-top: 24px; border-top: 2px solid #e5e7eb;">
+              <h3 style="color: #374151; font-size: 16px; margin-bottom: 16px; font-weight: 600;">📊 Client Information</h3>
+              <div style="background: #f9fafb; padding: 16px; border-radius: 8px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                  ${payload.metadata.location?.country ? `
+                  <tr>
+                    <td style="padding: 8px 0; color: #6b7280; width: 120px;"><strong>Location:</strong></td>
+                    <td style="padding: 8px 0; color: #111827;">
+                      ${payload.metadata.location.city ? `${payload.metadata.location.city}, ` : ''}
+                      ${payload.metadata.location.region ? `${payload.metadata.location.region}, ` : ''}
+                      ${payload.metadata.location.country || ''}
+                      ${payload.metadata.location.timezone ? ` (${payload.metadata.location.timezone})` : ''}
+                    </td>
+                  </tr>
+                  ` : ''}
+                  ${payload.metadata.device ? `
+                  <tr>
+                    <td style="padding: 8px 0; color: #6b7280;"><strong>Device:</strong></td>
+                    <td style="padding: 8px 0; color: #111827;">
+                      ${payload.metadata.device.type}
+                      ${payload.metadata.device.vendor ? ` • ${payload.metadata.device.vendor}` : ''}
+                      ${payload.metadata.device.model ? ` • ${payload.metadata.device.model}` : ''}
+                    </td>
+                  </tr>
+                  ` : ''}
+                  ${payload.metadata.os ? `
+                  <tr>
+                    <td style="padding: 8px 0; color: #6b7280;"><strong>Operating System:</strong></td>
+                    <td style="padding: 8px 0; color: #111827;">${payload.metadata.os.name} ${payload.metadata.os.version}</td>
+                  </tr>
+                  ` : ''}
+                  ${payload.metadata.browser ? `
+                  <tr>
+                    <td style="padding: 8px 0; color: #6b7280;"><strong>Browser:</strong></td>
+                    <td style="padding: 8px 0; color: #111827;">${payload.metadata.browser.name} ${payload.metadata.browser.version}</td>
+                  </tr>
+                  ` : ''}
+                  ${payload.metadata.language ? `
+                  <tr>
+                    <td style="padding: 8px 0; color: #6b7280;"><strong>Language:</strong></td>
+                    <td style="padding: 8px 0; color: #111827;">${payload.metadata.language}</td>
+                  </tr>
+                  ` : ''}
+                  <tr>
+                    <td style="padding: 8px 0; color: #6b7280;"><strong>IP Address:</strong></td>
+                    <td style="padding: 8px 0; color: #111827; font-family: monospace; font-size: 12px;">${payload.metadata.ip}</td>
+                  </tr>
+                  ${payload.metadata.referer ? `
+                  <tr>
+                    <td style="padding: 8px 0; color: #6b7280;"><strong>Referer:</strong></td>
+                    <td style="padding: 8px 0; color: #111827;">
+                      <a href="${payload.metadata.referer}" style="color: #3b82f6; text-decoration: none; word-break: break-all;">${payload.metadata.referer}</a>
+                    </td>
+                  </tr>
+                  ` : ''}
+                  <tr>
+                    <td style="padding: 8px 0; color: #6b7280;"><strong>Submitted:</strong></td>
+                    <td style="padding: 8px 0; color: #111827;">${new Date(payload.metadata.timestamp).toLocaleString()}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            ` : ''}
           </div>
           
           <div style="margin-top: 24px; text-align: center; color: #9ca3af; font-size: 14px;">
@@ -137,7 +289,7 @@ function generateEmailHTML(payload: EmailPayload): string {
 }
 
 function generateEmailText(payload: EmailPayload): string {
-  return `
+  let text = `
 New Contact Form Submission
 ============================
 
@@ -148,11 +300,60 @@ ${payload.website ? `Website: ${payload.website}` : ''}
 
 Message:
 ${payload.message}
+`
 
----
+  if (payload.metadata) {
+    text += `\n\nClient Information
+-------------------`
+    
+    if (payload.metadata.location?.country) {
+      const locationParts = [
+        payload.metadata.location.city,
+        payload.metadata.location.region,
+        payload.metadata.location.country
+      ].filter(Boolean)
+      text += `\nLocation: ${locationParts.join(', ')}`
+      if (payload.metadata.location.timezone) {
+        text += ` (${payload.metadata.location.timezone})`
+      }
+    }
+    
+    if (payload.metadata.device) {
+      const deviceParts = [
+        payload.metadata.device.type,
+        payload.metadata.device.vendor,
+        payload.metadata.device.model
+      ].filter(Boolean)
+      text += `\nDevice: ${deviceParts.join(' • ')}`
+    }
+    
+    if (payload.metadata.os) {
+      text += `\nOperating System: ${payload.metadata.os.name} ${payload.metadata.os.version}`
+    }
+    
+    if (payload.metadata.browser) {
+      text += `\nBrowser: ${payload.metadata.browser.name} ${payload.metadata.browser.version}`
+    }
+    
+    if (payload.metadata.language) {
+      text += `\nLanguage: ${payload.metadata.language}`
+    }
+    
+    text += `\nIP Address: ${payload.metadata.ip}`
+    
+    if (payload.metadata.referer) {
+      text += `\nReferer: ${payload.metadata.referer}`
+    }
+    
+    text += `\nSubmitted: ${new Date(payload.metadata.timestamp).toLocaleString()}`
+  }
+
+  text += `\n\n---
 Sent from your Portfolio Contact Form
 Reply directly to this email to respond to ${payload.name}
-  `.trim()
+  `
+  
+  return text.trim()
 }
 
 // Auto-reply to the sender
@@ -160,37 +361,55 @@ export async function sendAutoReply(payload: EmailPayload): Promise<EmailRespons
   const RESEND_API_KEY = process.env.RESEND_API_KEY
   
   if (!RESEND_API_KEY) {
-    return { success: true }
+    console.warn('Auto-reply skipped: RESEND_API_KEY not configured')
+    return { success: false, error: 'RESEND_API_KEY not configured' }
   }
 
   try {
+    const emailPayload = {
+      from: 'Portfolio <onboarding@resend.dev>',
+      to: [payload.email],
+      subject: "Thanks for reaching out! I'll be in touch soon.",
+      html: generateAutoReplyHTML(payload),
+      text: generateAutoReplyText(payload),
+    }
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${RESEND_API_KEY}`,
       },
-      body: JSON.stringify({
-        from: 'Portfolio <onboarding@resend.dev>',
-        to: [payload.email],
-        subject: "Thanks for reaching out! I'll be in touch soon.",
-        html: generateAutoReplyHTML(payload),
-        text: generateAutoReplyText(payload),
-      }),
+      body: JSON.stringify(emailPayload),
     })
 
+    const responseData = await response.json()
+
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || 'Failed to send auto-reply')
+      const errorMessage = responseData.message || responseData.error?.message || 'Failed to send auto-reply'
+      console.error('Auto-reply failed:', {
+        status: response.status,
+        error: responseData,
+        message: errorMessage,
+      })
+      throw new Error(errorMessage)
     }
 
-    const data = await response.json()
-    return { success: true, messageId: data.id }
+    console.log('✅ Auto-reply sent successfully:', {
+      messageId: responseData.id,
+      to: payload.email,
+      timestamp: new Date().toISOString(),
+    })
+
+    return { success: true, messageId: responseData.id }
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Auto-reply failed:', error)
-    }
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    console.error('❌ Auto-reply failed:', {
+      error: errorMessage,
+      to: payload.email,
+      timestamp: new Date().toISOString(),
+    })
+    return { success: false, error: errorMessage }
   }
 }
 
