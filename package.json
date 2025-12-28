@@ -101,5 +101,8 @@
     "*.{json,md}": [
       "prettier --write"
     ]
+  },
+  "overrides": {
+    "glob": "^10.4.6"
   }
 }
