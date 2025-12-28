@@ -82,3 +82,4 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 - Extra spaces or quotes around values
 - Forgot to restart server after adding variables
 
+
