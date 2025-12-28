@@ -30,11 +30,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Section anchors (for better SEO)
   const sections: MetadataRoute.Sitemap = [
-    { url: `${baseUrl}/#about`, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/#experience`, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/#projects`, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/#certifications`, changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${baseUrl}/#contact`, changeFrequency: 'yearly', priority: 0.9 },
+    { url: `${baseUrl}/#about`, changeFrequency: 'monthly' as const, priority: 0.7 },
+    { url: `${baseUrl}/#experience`, changeFrequency: 'monthly' as const, priority: 0.7 },
+    { url: `${baseUrl}/#projects`, changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${baseUrl}/#certifications`, changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: `${baseUrl}/#contact`, changeFrequency: 'yearly' as const, priority: 0.9 },
   ].map(section => ({
     ...section,
     lastModified: new Date(),
@@ -42,6 +42,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...staticPages, ...blogPosts, ...sections]
 }
+
 
 
 
