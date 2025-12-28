@@ -178,3 +178,4 @@ If you have questions about what data is collected or how it's used, check:
 - `lib/email.ts` - See how it's displayed
 - `app/api/contact/route.ts` - See when it's collected
 
+
