@@ -32,7 +32,12 @@ describe('Footer', () => {
     renderWithProviders(<Footer />)
     
     const currentYear = new Date().getFullYear()
-    expect(screen.getByText(new RegExp(currentYear.toString()))).toBeInTheDocument()
+    // Check for copyright text that includes the year
+    // Use a more specific pattern that matches the copyright line format
+    const copyrightText = screen.getByText((content, element) => {
+      return element?.textContent?.includes(`© ${currentYear}`) || false
+    })
+    expect(copyrightText).toBeInTheDocument()
   })
 })
 
