@@ -80,15 +80,17 @@ describe('analytics', () => {
 
     it('logs in development mode', () => {
       const originalEnv = process.env.NODE_ENV
-      // Use type assertion to allow modification for testing
-      ;(process.env as { NODE_ENV: string }).NODE_ENV = 'development'
+      // Mock NODE_ENV for testing - TypeScript marks this as read-only, so we need to suppress the error
+      // @ts-expect-error - NODE_ENV is read-only in types but writable at runtime for testing
+      process.env.NODE_ENV = 'development'
       
       trackPageView({ url: '/test' })
       
       expect(console.log).toHaveBeenCalledWith('📊 Page View:', { url: '/test' })
       
       // Restore original value
-      ;(process.env as { NODE_ENV: string }).NODE_ENV = originalEnv
+      // @ts-expect-error - NODE_ENV is read-only in types but writable at runtime for testing
+      process.env.NODE_ENV = originalEnv
     })
   })
 
