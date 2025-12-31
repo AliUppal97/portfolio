@@ -287,8 +287,8 @@ export function FloatingCTA() {
                 className={cn(
                   "relative px-5 py-4 rounded-xl shadow-xl backdrop-blur-xl border",
                   "min-w-[260px] max-w-sm",
-                  "bg-white/95 dark:bg-gray-900/95",
-                  "border border-white/20 dark:border-gray-700/50"
+                  "bg-popover text-popover-foreground",
+                  "border-border/50"
                 )}
               >
                 {/* Tooltip Header - Enhanced */}
@@ -300,16 +300,16 @@ export function FloatingCTA() {
                     <button.icon className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-base leading-tight text-gray-900 dark:text-white">{button.label}</h3>
-                    <p className="text-sm opacity-80 leading-relaxed text-gray-600 dark:text-gray-300">{button.subtitle}</p>
+                    <h3 className="font-semibold text-base leading-tight text-popover-foreground">{button.label}</h3>
+                    <p className="text-sm opacity-80 leading-relaxed text-muted-foreground">{button.subtitle}</p>
                   </div>
                 </div>
 
                 {/* Tooltip Content */}
-                <p className="text-sm leading-relaxed opacity-90 mb-3 text-gray-700 dark:text-gray-200">{button.description}</p>
+                <p className="text-sm leading-relaxed opacity-90 mb-3 text-popover-foreground">{button.description}</p>
 
                 {/* Action Indicator */}
-                <div className="flex items-center gap-2 text-xs opacity-70 text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-2 text-xs opacity-70 text-muted-foreground">
                   <span>
                     {button.action === "scroll" && "Click to scroll to contact"}
                     {button.action === "download" && "Click to download resume"}
@@ -324,7 +324,7 @@ export function FloatingCTA() {
 
                 {/* Tooltip Arrow */}
                 <div 
-                  className="absolute left-full top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 bg-white/95 dark:bg-gray-900/95 border-l border-b border-white/20 dark:border-gray-700/50"
+                  className="absolute left-full top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 bg-popover border-l border-b border-border/50"
                 />
               </div>
             </div>

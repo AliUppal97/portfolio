@@ -172,8 +172,8 @@ function ExperienceIndicator({ years, color, lightBg = false }: { years: number;
   }
 
   const { label, icon: Icon } = getProficiencyLevel(years)
-  // Use appropriate inactive color based on background
-  const inactiveColor = lightBg ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.2)"
+  // Use theme-aware inactive color
+  const inactiveColor = "hsl(var(--muted-foreground) / 0.4)"
 
   return (
     <div className="flex items-center gap-2">
@@ -325,11 +325,10 @@ function PremiumTechCard({ item, index, inView }: { item: TechnologyItem; index:
         </div>
       </HoverCardTrigger>
       <HoverCardContent
-        className="z-50 w-80 rounded-3xl border-0 p-5"
+        className="z-50 w-80 rounded-3xl border-0 p-5 bg-popover text-popover-foreground"
         style={{
-          background: "linear-gradient(160deg, #ffffff 0%, #f8fafc 100%)",
           backdropFilter: "blur(20px)",
-          boxShadow: `0 25px 50px -12px ${colors.primary}30, 0 0 0 1px rgba(0,0,0,0.06)`,
+          boxShadow: `0 25px 50px -12px ${colors.primary}30, 0 0 0 1px hsl(var(--border) / 0.5)`,
         }}
         align="center"
         side="top"
@@ -347,9 +346,9 @@ function PremiumTechDetails({ item, colors }: { item: TechnologyItem; colors: an
   const CategoryIcon = categoryIcons[item.category as keyof typeof categoryIcons]
   const brandColor = techBrandColors[item.name] || { primary: colors.primary, secondary: colors.secondary }
 
-  // High contrast colors for the light popover background
-  const textPrimary = "#0f172a" // slate-900 for maximum contrast
-  const textSecondary = "#475569" // slate-600 for secondary text
+  // Use theme CSS variables for text colors
+  const textPrimary = "hsl(var(--popover-foreground))"
+  const textSecondary = "hsl(var(--muted-foreground))"
   
   // Ensure icon color has enough contrast (darken if needed for light colors)
   const ensureContrast = (color: string) => {
@@ -401,7 +400,7 @@ function PremiumTechDetails({ item, colors }: { item: TechnologyItem; colors: an
       </p>
 
       {/* Experience details with improved layout */}
-      <div className="space-y-3 p-3 rounded-xl" style={{ backgroundColor: "rgba(0,0,0,0.02)" }}>
+      <div className="space-y-3 p-3 rounded-xl" style={{ backgroundColor: "hsl(var(--muted) / 0.3)" }}>
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium" style={{ color: textSecondary }}>
             Years of Experience
@@ -410,7 +409,7 @@ function PremiumTechDetails({ item, colors }: { item: TechnologyItem; colors: an
             {item.yearsLabel}
           </span>
         </div>
-        <ExperienceIndicator years={item.years} color={iconColor} lightBg={true} />
+        <ExperienceIndicator years={item.years} color={iconColor} />
       </div>
 
       {/* Status indicators with icon containers for better contrast */}
