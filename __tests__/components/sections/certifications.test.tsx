@@ -23,8 +23,8 @@ describe('CertificationsSection', () => {
   it('renders certifications section', () => {
     renderWithProviders(<CertificationsSection />)
     
-    // Check for section heading
-    expect(screen.getByText(/Certifications/i)).toBeInTheDocument()
+    // Check for section heading - the actual heading is "Professional Certifications"
+    expect(screen.getByText(/Professional Certifications/i)).toBeInTheDocument()
   })
 
   it('renders certification stats', () => {

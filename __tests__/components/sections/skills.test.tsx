@@ -32,8 +32,8 @@ describe('SkillsSection', () => {
   it('renders skills section', () => {
     renderWithProviders(<SkillsSection />)
     
-    // Check for section heading
-    expect(screen.getByText(/Skills/i)).toBeInTheDocument()
+    // Check for section heading - the actual heading is "Core Skills Mastery"
+    expect(screen.getByText(/Core Skills Mastery/i)).toBeInTheDocument()
   })
 
   it('renders skill categories', () => {

@@ -41,8 +41,8 @@ describe('ExperienceSection', () => {
   it('renders experience section', () => {
     renderWithProviders(<ExperienceSection />)
     
-    // Check for section heading
-    expect(screen.getByText(/Experience/i)).toBeInTheDocument()
+    // Check for section heading - the actual heading is "Professional Experience"
+    expect(screen.getByText(/Professional Experience/i)).toBeInTheDocument()
   })
 
   it('renders experience items', () => {

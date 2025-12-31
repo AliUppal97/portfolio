@@ -30,9 +30,11 @@ describe('AboutSection', () => {
   it('renders highlights', () => {
     renderWithProviders(<AboutSection />)
     
-    // Check for highlight titles
-    expect(screen.getByText(/Team Leadership/i)).toBeInTheDocument()
-    expect(screen.getByText(/Zero Downtime/i)).toBeInTheDocument()
+    // Check for highlight titles - use getAllByText since they may appear multiple times
+    const teamLeadershipElements = screen.getAllByText(/Team Leadership/i)
+    expect(teamLeadershipElements.length).toBeGreaterThan(0)
+    const zeroDowntimeElements = screen.getAllByText(/Zero Downtime/i)
+    expect(zeroDowntimeElements.length).toBeGreaterThan(0)
     expect(screen.getByText(/Performance Gains/i)).toBeInTheDocument()
   })
 
