@@ -36,8 +36,8 @@ describe('AchievementsSection', () => {
   it('renders achievements section', () => {
     renderWithProviders(<AchievementsSection />)
     
-    // Check for section heading
-    expect(screen.getByText(/Achievements/i)).toBeInTheDocument()
+    // Check for section heading - the actual heading is "Delivering Excellence"
+    expect(screen.getByText(/Delivering Excellence/i)).toBeInTheDocument()
   })
 
   it('renders metrics', () => {

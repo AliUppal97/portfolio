@@ -41,8 +41,8 @@ describe('ToolsSection', () => {
   it('renders tools section', () => {
     renderWithProviders(<ToolsSection />)
     
-    // Check for section heading
-    expect(screen.getByText(/Tools/i)).toBeInTheDocument()
+    // Check for section heading - the actual heading is "Professional Toolkit"
+    expect(screen.getByText(/Professional Toolkit/i)).toBeInTheDocument()
   })
 
   it('renders tool categories', () => {

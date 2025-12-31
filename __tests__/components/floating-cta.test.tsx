@@ -40,8 +40,9 @@ describe('FloatingCTA', () => {
     renderWithProviders(<FloatingCTA />)
     
     // Should have action buttons like Hire Me, Resume, etc.
-    const hireButton = screen.queryByText(/Hire|Resume|Schedule/i)
-    expect(hireButton || document.body).toBeInTheDocument()
+    // Use getAllByText since these texts may appear multiple times (in buttons and tooltips)
+    const hireElements = screen.getAllByText(/Hire Me/i)
+    expect(hireElements.length).toBeGreaterThan(0)
   })
 })
 

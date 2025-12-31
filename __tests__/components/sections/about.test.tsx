@@ -39,16 +39,19 @@ describe('AboutSection', () => {
   it('renders expertise areas', () => {
     renderWithProviders(<AboutSection />)
     
-    // Check for expertise labels
-    expect(screen.getByText(/Fintech/i)).toBeInTheDocument()
-    expect(screen.getByText(/Healthcare/i)).toBeInTheDocument()
+    // Check for expertise labels - use getAllByText since they may appear multiple times
+    const fintechElements = screen.getAllByText(/Fintech/i)
+    expect(fintechElements.length).toBeGreaterThan(0)
+    const healthcareElements = screen.getAllByText(/Healthcare/i)
+    expect(healthcareElements.length).toBeGreaterThan(0)
   })
 
   it('renders strengths', () => {
     renderWithProviders(<AboutSection />)
     
-    // Check for strength labels
-    expect(screen.getByText(/Leadership/i)).toBeInTheDocument()
+    // Check for strength labels - use getAllByText since "Leadership" appears in both highlights and strengths
+    const leadershipElements = screen.getAllByText(/Leadership/i)
+    expect(leadershipElements.length).toBeGreaterThan(0)
     expect(screen.getByText(/Architecture/i)).toBeInTheDocument()
   })
 })

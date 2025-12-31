@@ -31,8 +31,8 @@ describe('ContactSection', () => {
   it('renders contact section', () => {
     renderWithProviders(<ContactSection />)
     
-    // Check for section heading
-    expect(screen.getByText(/Contact/i)).toBeInTheDocument()
+    // Check for section heading - the actual heading is "Let's Build Something Amazing"
+    expect(screen.getByText(/Let's Build Something Amazing/i)).toBeInTheDocument()
   })
 
   it('renders contact form', () => {
@@ -41,7 +41,8 @@ describe('ContactSection', () => {
     // Form fields should be rendered
     expect(screen.getByLabelText(/Name/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Email/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Message/i)).toBeInTheDocument()
+    // The label is "Project Details" not "Message"
+    expect(screen.getByLabelText(/Project Details/i)).toBeInTheDocument()
   })
 
   it('submits form with valid data', async () => {
@@ -55,7 +56,8 @@ describe('ContactSection', () => {
     
     await user.type(screen.getByLabelText(/Name/i), 'Test User')
     await user.type(screen.getByLabelText(/Email/i), 'test@example.com')
-    await user.type(screen.getByLabelText(/Message/i), 'This is a test message')
+    // The label is "Project Details" not "Message"
+    await user.type(screen.getByLabelText(/Project Details/i), 'This is a test message')
     
     const submitButton = screen.getByRole('button', { name: /Send/i })
     await user.click(submitButton)
