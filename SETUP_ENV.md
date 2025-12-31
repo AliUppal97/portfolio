@@ -83,3 +83,5 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 - Forgot to restart server after adding variables
 
 
+
+
