@@ -80,21 +80,15 @@ describe('analytics', () => {
 
     it('logs in development mode', () => {
       const originalEnv = process.env.NODE_ENV
-      Object.defineProperty(process.env, 'NODE_ENV', {
-        value: 'development',
-        writable: true,
-        configurable: true,
-      })
+      // Use type assertion to allow modification for testing
+      ;(process.env as { NODE_ENV: string }).NODE_ENV = 'development'
       
       trackPageView({ url: '/test' })
       
       expect(console.log).toHaveBeenCalledWith('📊 Page View:', { url: '/test' })
       
-      Object.defineProperty(process.env, 'NODE_ENV', {
-        value: originalEnv,
-        writable: true,
-        configurable: true,
-      })
+      // Restore original value
+      ;(process.env as { NODE_ENV: string }).NODE_ENV = originalEnv
     })
   })
 
