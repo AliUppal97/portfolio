@@ -15,7 +15,13 @@ const customJestConfig = {
   },
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
   // Use v8 coverage provider for better Next.js compatibility
+  // This prevents the babel-plugin-istanbul compatibility issues
   coverageProvider: 'v8',
+  // Transform ignore patterns to prevent Next.js from transforming files during coverage
+  transformIgnorePatterns: [
+    '/node_modules/',
+    '^.+\\.module\\.(css|sass|scss)$',
+  ],
   collectCoverageFrom: [
     'components/**/*.{js,jsx,ts,tsx}',
     'lib/**/*.{js,jsx,ts,tsx}',
@@ -32,6 +38,7 @@ const customJestConfig = {
     '!app/manifest.ts',
     '!app/robots.ts',
     '!app/sitemap.ts',
+    '!app/blog/**', // Exclude blog pages
     '!components/ui/**', // Exclude UI components from coverage
   ],
   coveragePathIgnorePatterns: [
@@ -53,7 +60,15 @@ const customJestConfig = {
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports = createJestConfig(customJestConfig)
+// Wrap the config to ensure coverageProvider is always set to v8
+const baseJestConfig = createJestConfig(customJestConfig)
+module.exports = async () => {
+  const config = await baseJestConfig()
+  // Explicitly set coverage provider to v8 to override any defaults from next/jest
+  // This prevents babel-plugin-istanbul compatibility issues with Next.js
+  config.coverageProvider = 'v8'
+  return config
+}
 
 
 
