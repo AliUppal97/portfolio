@@ -64,13 +64,16 @@ const customJestConfig = {
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-// Wrap the config to ensure coverageProvider is always set to v8
+// Wrap the config to ensure coverageProvider is always set to v8 and threshold is removed
 const baseJestConfig = createJestConfig(customJestConfig)
 module.exports = async () => {
   const config = await baseJestConfig()
   // Explicitly set coverage provider to v8 to override any defaults from next/jest
   // This prevents babel-plugin-istanbul compatibility issues with Next.js
   config.coverageProvider = 'v8'
+  // Explicitly remove coverageThreshold to prevent Jest bug with v8 coverage
+  // The threshold checker has a bug that tries to access 'sync' property that doesn't exist
+  delete config.coverageThreshold
   return config
 }
 
