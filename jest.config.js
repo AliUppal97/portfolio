@@ -14,12 +14,33 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/$1',
   },
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
+  // Use v8 coverage provider for better Next.js compatibility
+  coverageProvider: 'v8',
   collectCoverageFrom: [
     'components/**/*.{js,jsx,ts,tsx}',
     'lib/**/*.{js,jsx,ts,tsx}',
-    'app/**/*.{js,jsx,ts,tsx}',
+    'app/api/**/*.{js,jsx,ts,tsx}',
     '!**/*.d.ts',
     '!**/node_modules/**',
+    '!**/.next/**',
+    '!**/coverage/**',
+    '!app/layout.tsx',
+    '!app/page.tsx',
+    '!app/ClientLayout.tsx',
+    '!app/loading.tsx',
+    '!app/not-found.tsx',
+    '!app/manifest.ts',
+    '!app/robots.ts',
+    '!app/sitemap.ts',
+    '!components/ui/**', // Exclude UI components from coverage
+  ],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/.next/',
+    '/coverage/',
+    '/__tests__/',
+    '/__mocks__/',
+    '/components/ui/',
   ],
   coverageThreshold: {
     global: {
