@@ -33,11 +33,20 @@ describe('Footer', () => {
     
     const currentYear = new Date().getFullYear()
     // Check for copyright text that includes the year
-    // Use a more specific pattern that matches the copyright line format
-    const copyrightText = screen.getByText((content, element) => {
-      return element?.textContent?.includes(`© ${currentYear}`) || false
+    // Use getAllByText and filter to find the copyright element specifically
+    // This avoids matching "Q1 2025" text which also contains the year
+    const yearElements = screen.getAllByText((content, element) => {
+      const text = element?.textContent || ''
+      return text.includes(currentYear.toString())
     })
-    expect(copyrightText).toBeInTheDocument()
+    
+    // Find the one that contains the copyright symbol
+    const copyrightElement = yearElements.find((el) => {
+      return el.textContent?.includes('©')
+    })
+    
+    expect(copyrightElement).toBeInTheDocument()
+    expect(copyrightElement?.textContent).toContain(`© ${currentYear}`)
   })
 })
 
