@@ -58,8 +58,11 @@ function parseUserAgent(userAgent: string): {
     result.browser = { name: 'Opera', version: match ? match[1] : 'Unknown' }
   }
 
-  // OS detection
-  if (userAgent.includes('Windows')) {
+  // OS detection (check iPhone/iPad first since they contain "Mac OS X" in user agent)
+  if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+    const match = userAgent.match(/OS ([\d_]+)/)
+    result.os = { name: userAgent.includes('iPad') ? 'iPadOS' : 'iOS', version: match ? match[1].replace(/_/g, '.') : 'Unknown' }
+  } else if (userAgent.includes('Windows')) {
     if (userAgent.includes('Windows NT 10.0')) {
       result.os = { name: 'Windows', version: '10/11' }
     } else if (userAgent.includes('Windows NT 6.3')) {
@@ -77,9 +80,6 @@ function parseUserAgent(userAgent: string): {
   } else if (userAgent.includes('Android')) {
     const match = userAgent.match(/Android ([\d.]+)/)
     result.os = { name: 'Android', version: match ? match[1] : 'Unknown' }
-  } else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
-    const match = userAgent.match(/OS ([\d_]+)/)
-    result.os = { name: userAgent.includes('iPad') ? 'iPadOS' : 'iOS', version: match ? match[1].replace(/_/g, '.') : 'Unknown' }
   }
 
   // Device detection
